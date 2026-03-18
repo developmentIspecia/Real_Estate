@@ -1,0 +1,30 @@
+diff --git a/node_modules/react-native/Libraries/Utilities/DevLoadingView.js b/node_modules/react-native/Libraries/Utilities/DevLoadingView.js
+index d17e251..c8c680a 100644
+--- a/node_modules/react-native/Libraries/Utilities/DevLoadingView.js
++++ b/node_modules/react-native/Libraries/Utilities/DevLoadingView.js
+@@ -9,7 +9,7 @@
+  */
+ 
+ import processColor from '../StyleSheet/processColor';
+-import {getColorScheme} from './Appearance';
++import { getColorScheme } from './Appearance';
+ import NativeDevLoadingView from './NativeDevLoadingView';
+ 
+ const COLOR_SCHEME = {
+@@ -47,7 +47,7 @@ export default {
+   showMessage(
+     message: string,
+     type: 'load' | 'refresh' | 'error',
+-    options?: {dismissButton?: boolean},
++    options?: { dismissButton?: boolean },
+   ) {
+     if (NativeDevLoadingView) {
+       const colorScheme =
+@@ -69,7 +69,6 @@ export default {
+         message,
+         typeof textColor === 'number' ? textColor : null,
+         typeof backgroundColor === 'number' ? backgroundColor : null,
+-        hasDismissButton,
+       );
+     }
+   },

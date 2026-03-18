@@ -1,0 +1,27 @@
+./screens/LoginScreen.jsx:35:            Alert.alert("Error", "Enter email and password");
+./screens/LoginScreen.jsx:59:            Alert.alert(
+./screens/OTPVerificationScreen.jsx:84:      Alert.alert("OTP Resent", "A new OTP has been sent to your email.");
+./screens/ForgotPasswordScreen.jsx:29:    if (!email) return Alert.alert("Error", "Enter your registered email");
+./screens/ForgotPasswordScreen.jsx:33:      Alert.alert("Success", "OTP sent to your email");
+./screens/ForgotPasswordScreen.jsx:36:      Alert.alert("Error", err.response?.data?.message || "Error sending OTP");
+./screens/ForgotPasswordScreen.jsx:44:    if (!otp) return Alert.alert("Error", "Enter OTP");
+./screens/ForgotPasswordScreen.jsx:51:      return Alert.alert("Error", "Enter all fields");
+./screens/ForgotPasswordScreen.jsx:53:      return Alert.alert("Error", "Passwords do not match");
+./screens/ForgotPasswordScreen.jsx:62:      Alert.alert(
+./screens/ForgotPasswordScreen.jsx:68:      Alert.alert("Error", err.response?.data?.message || "Error resetting password");
+./screens/AdminScreens/UploadProperty.jsx:31:        Alert.alert(
+./screens/AdminScreens/UploadProperty.jsx:49:      Alert.alert("Error", "Failed to open gallery");
+./screens/AdminScreens/UploadProperty.jsx:61:      Alert.alert("Error", "Please fill all fields and upload at least one image");
+./screens/AdminScreens/UploadProperty.jsx:86:      Alert.alert("Success", "Property uploaded successfully!");
+./screens/AdminScreens/UploadProperty.jsx:97:      Alert.alert("Error", "Failed to upload property");
+./screens/UserScreens/NavScreens/ContactScreen.jsx:19:      Alert.alert("Error", "Please fill all fields");
+./screens/UserScreens/NavScreens/ContactScreen.jsx:23:    Alert.alert("Success", "Your message has been sent!");
+./screens/UserScreens/ShareScreen.jsx:13:        Alert.alert('Thanks for sharing!', 'We appreciate your support 🤝');
+./screens/UserScreens/ShareScreen.jsx:16:      Alert.alert('Error', 'Something went wrong while sharing the app.');
+./screens/UserScreens/Setting/ChangePassword.jsx:21:      Alert.alert("Error", "New passwords do not match");
+./screens/UserScreens/Setting/ChangePassword.jsx:35:      Alert.alert("Success", "Password changed successfully. Please login again.");
+./screens/UserScreens/Setting/ChangePassword.jsx:40:      Alert.alert("Error", "Failed to change password");
+./screens/WantScreen.jsx:39:      Alert.alert("Select at least one option");
+./screens/SignupScreen.jsx:40:      Alert.alert("Error", "Please fill all required fields");
+./screens/SignupScreen.jsx:45:      Alert.alert("Error", "Passwords do not match");
+./screens/SignupScreen.jsx:71:      Alert.alert(

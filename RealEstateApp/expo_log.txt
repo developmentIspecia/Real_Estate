@@ -1,0 +1,13 @@
+Starting project at /Users/vaishaligupta/Desktop/RealStateProject/Real_Estate-main/RealEstateApp
+Starting Metro Bundler
+The following packages should be updated for best compatibility with the installed expo version:
+  expo-document-picker@14.0.7 - expected version: ~14.0.8
+  expo-image-picker@17.0.8 - expected version: ~17.0.10
+  expo-linear-gradient@15.0.7 - expected version: ~15.0.8
+  expo-status-bar@3.0.8 - expected version: ~3.0.9
+  react-native@0.81.4 - expected version: 0.81.5
+  babel-preset-expo@54.0.3 - expected version: ~54.0.10
+  expo@54.0.12 - expected version: ~54.0.33
+Your project may not work correctly until you install the expected versions of the packages.
+Waiting on http://localhost:8081
+Logs for your project will appear below.
