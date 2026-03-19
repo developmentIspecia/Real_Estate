@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   bio: String,
   profilePhoto: String,
   role: { type: String, default: "user" },
+  isBlocked: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
 });
 

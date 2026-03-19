@@ -16,9 +16,11 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 /* ---------------- SIGNUP ---------------- */
 export const signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    let { name, email, password } = req.body;
     if (!name || !email || !password)
       return res.status(400).json({ message: "All fields required" });
+
+    password = password.trim();
 
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser)
@@ -55,9 +57,11 @@ export const signup = async (req, res) => {
 /* ---------------- LOGIN ---------------- */
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     if (!email || !password)
       return res.status(400).json({ message: "All fields required" });
+
+    password = password.trim();
 
     // Admin login (requires OTP every time)
     if (

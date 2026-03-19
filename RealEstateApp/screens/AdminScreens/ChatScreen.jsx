@@ -25,14 +25,15 @@ const scale = (size) => (width / 375) * size;
 const verticalScale = (size) => (height / 812) * size;
 
 export default function ChatScreen({ route, navigation }) {
-  const { userId, userName } = route.params || {};
-  const { width, height } = useWindowDimensions();
+    const { userId, userName } = route.params || {};
+    const { width, height } = useWindowDimensions();
+    const partnerAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || "User")}&background=1D5FAD&color=fff&size=128`;
 
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
   const [token, setToken] = useState("");
+  const [myUserId, setMyUserId] = useState(null);
   const [alertConfig, setAlertConfig] = useState({ visible: false, title: "", message: "" });
-  const intervalRef = useRef(null);
   const flatListRef = useRef(null);
 
   useEffect(() => {
@@ -43,8 +44,6 @@ export default function ChatScreen({ route, navigation }) {
     };
     loadToken();
   }, []);
-
-  // ... Inside ChatScreen component ...
 
   useEffect(() => {
     if (!token || !userId) return;
@@ -69,14 +68,28 @@ export default function ChatScreen({ route, navigation }) {
 
     socket.on("connect", () => {
       console.log("Admin connected to socket");
-      socket.emit("joinRoom", "admin");
+      
+      // Fetch profile to get my ID for room joining
+      api.get("/user/profile", { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => {
+          setMyUserId(res.data._id);
+          socket.emit("joinRoom", res.data._id); // Join my own room
+          socket.emit("joinRoom", "admin");      // Also join admin room
+        })
+        .catch(err => console.error("Failed to fetch admin profile for socket:", err));
     });
 
     socket.on("receiveMessage", (newMessage) => {
-      // Only append if it belongs to the current user's thread 
-      // i.e., I sent it to them, or they sent it to me
-      if (newMessage.sender === userId || newMessage.receiver === userId) {
-        setMessages((prev) => [...prev, newMessage]);
+      // Check if message belongs to this specific conversation
+      const senderId = newMessage.sender?._id || newMessage.sender;
+      const receiverId = newMessage.receiver?._id || newMessage.receiver;
+
+      if (senderId === userId || receiverId === userId) {
+        setMessages((prev) => {
+            // Prevent duplicate messages if socket emits multiple times
+            if (prev.find(m => m._id === newMessage._id)) return prev;
+            return [...prev, newMessage];
+        });
         setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 200);
       }
     });
@@ -105,15 +118,15 @@ export default function ChatScreen({ route, navigation }) {
   };
 
   const renderMessage = ({ item }) => {
-    const isAdmin = item.role === "admin";
+    const isMe = item.sender === myUserId || item.sender?._id === myUserId || item.role === 'admin';
     return (
-      <View style={[styles.messageWrapper, isAdmin ? styles.adminWrapper : styles.userWrapper, { marginVertical: verticalScale(8) }]}>
-        <View style={[styles.messageBubble, isAdmin ? styles.adminBubble : styles.userBubble, { paddingVertical: verticalScale(10), paddingHorizontal: scale(16), borderRadius: scale(15) }]}>
-          <Text style={[styles.messageText, isAdmin ? styles.adminText : styles.userText, { fontSize: scale(14), lineHeight: scale(20) }]}>
+      <View style={[styles.messageWrapper, isMe ? styles.adminWrapper : styles.userWrapper, { marginVertical: verticalScale(8) }]}>
+        <View style={[styles.messageBubble, isMe ? styles.adminBubble : styles.userBubble, { paddingVertical: verticalScale(10), paddingHorizontal: scale(16), borderRadius: scale(15) }]}>
+          <Text style={[styles.messageText, isMe ? styles.adminText : styles.userText, { fontSize: scale(14), lineHeight: scale(20) }]}>
             {item.message}
           </Text>
         </View>
-        <Text style={[styles.timestamp, isAdmin ? styles.adminTimestamp : styles.userTimestamp, { fontSize: scale(11), marginTop: verticalScale(4) }]}>
+        <Text style={[styles.timestamp, isMe ? styles.adminTimestamp : styles.userTimestamp, { fontSize: scale(11), marginTop: verticalScale(4) }]}>
           {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
       </View>
@@ -139,12 +152,13 @@ export default function ChatScreen({ route, navigation }) {
           </TouchableOpacity>
 
           <View style={[styles.headerInfo, { marginLeft: scale(8) }]}>
-            <View style={[styles.avatarContainer, { width: scale(40), height: scale(40), borderRadius: scale(20), borderWidth: scale(1.5) }]}>
+            <View style={[styles.avatarContainer, { width: scale(40), height: scale(40), borderRadius: scale(20), borderWidth: scale(1.5), borderColor: '#FFF' }]}>
               <Image
-                source={{ uri: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" }}
+                source={{ uri: partnerAvatar }}
                 style={[styles.avatar, { borderRadius: scale(20) }]}
               />
             </View>
+
             <Text style={[styles.headerName, { fontSize: scale(18), marginLeft: scale(10), letterSpacing: scale(0.2) }]} numberOfLines={1}>{userName || "John Smith"}</Text>
           </View>
         </View>

@@ -15,6 +15,7 @@ const propertySchema = new mongoose.Schema(
     amenities: { type: String },
     contact: { type: String, required: true },
     images: { type: [String], default: [] },
+    agent: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );

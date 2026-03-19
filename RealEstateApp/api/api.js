@@ -16,19 +16,19 @@ export const setAuthToken = (token) => {
 // ------------------ Auth APIs ------------------
 export const loginUser = async (data) => {
   const res = await api.post("/auth/login", {
-    email: data.email.toLowerCase(),
-    password: data.password,
+    email: data.email.trim().toLowerCase(),
+    password: data.password.trim(),
   });
   return res.data;
 };
 
 export const signup = async (data) => {
   const res = await api.post("/auth/signup", {
-    name: data.name,
-    middleName: data.middleName,
-    lastName: data.lastName,
-    email: data.email.toLowerCase(),
-    password: data.password,
+    name: data.name.trim(),
+    middleName: data.middleName ? data.middleName.trim() : "",
+    lastName: data.lastName ? data.lastName.trim() : "",
+    email: data.email.trim().toLowerCase(),
+    password: data.password.trim(),
   });
   return res.data;
 };
@@ -140,3 +140,4 @@ export const deleteProperty = async (id) => {
   const res = await api.delete(`/properties/${id}`);
   return res.data;
 };
+

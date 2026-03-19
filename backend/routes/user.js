@@ -55,19 +55,17 @@ router.put("/profile", authMiddleware, upload.single("profilePhoto"), async (req
         return res.status(500).json({ message: "Failed to upload profile photo" });
       }
     }
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
+    if (location) updateData.location = location;
+    if (bio) updateData.bio = bio;
+    if (email) updateData.email = email;
+    if (profilePhoto) updateData.profilePhoto = profilePhoto;
 
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      {
-        $set: {
-          name,
-          phone,
-          location,
-          bio,
-          email,
-          profilePhoto
-        }
-      },
+      { $set: updateData },
       { new: true, runValidators: true }
     ).select("name middleName lastName email role phone location bio profilePhoto");
 
@@ -99,19 +97,17 @@ router.post("/profile-update", authMiddleware, upload.any(), async (req, res) =>
         return res.status(500).json({ message: "Failed to upload profile photo", error: uploadError.message });
       }
     }
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
+    if (location) updateData.location = location;
+    if (bio) updateData.bio = bio;
+    if (email) updateData.email = email;
+    if (profilePhoto) updateData.profilePhoto = profilePhoto;
 
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      {
-        $set: {
-          name,
-          phone,
-          location,
-          bio,
-          email,
-          profilePhoto
-        }
-      },
+      { $set: updateData },
       { new: true, runValidators: true }
     ).select("name middleName lastName email role phone location bio profilePhoto");
 

@@ -12,6 +12,8 @@ import {
     Animated,
     ScrollView,
     TextInput,
+    Modal,
+    ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -19,6 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API_BASE } from "../../../api/api";
 import socket from "../../../socket/socket";
+import CustomAlert from "../../../components/CustomAlert";
 
 const { width, height } = Dimensions.get("window");
 const scale = (size) => (width / 375) * size;
@@ -31,10 +34,12 @@ export default function MessagesScreen({ navigation }) {
 
     const [userRole, setUserRole] = useState("user");
     const [searchQuery, setSearchQuery] = useState("");
-    const [userContacts, setUserContacts] = useState([]);
-    const [adminMessages, setAdminMessages] = useState([]);
+    const [conversations, setConversations] = useState([]);
+    const [contacts, setContacts] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [loadingContacts, setLoadingContacts] = useState(false);
-    const [loadingAdminMessages, setLoadingAdminMessages] = useState(false);
+    const [showContactsModal, setShowContactsModal] = useState(false);
+    const [alertConfig, setAlertConfig] = useState({ visible: false, title: "", message: "" });
 
     const formatDate = (dateString) => {
         if (!dateString) return "";
@@ -56,86 +61,96 @@ export default function MessagesScreen({ navigation }) {
         fetchRole();
     }, []);
 
-    // Fetch real admin/agent contacts for users to chat with
+    const fetchConversations = async (showLoading = true) => {
+        if (showLoading) setLoading(true);
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) return;
+            const res = await axios.get(`${API_BASE}/chat/active-conversations`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            const mapped = res.data.map(conv => ({
+                id: conv.id,
+                name: conv.name,
+                lastMessage: conv.lastMessage,
+                time: formatDate(conv.timestamp),
+                unreadCount: 0,
+                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(conv.name)}&background=1D5FAD&color=fff&size=128`,
+                role: conv.role,
+                timestamp: conv.timestamp,
+                agent: conv.role === "agent" ? "Direct Chat" : "User",
+                ref: "Message"
+            }));
+
+            setConversations(mapped);
+        } catch (err) {
+            console.error("Error fetching conversations:", err);
+        } finally {
+            if (showLoading) setLoading(false);
+        }
+    };
+
+    const fetchContacts = async () => {
+        setLoadingContacts(true);
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            const res = await axios.get(`${API_BASE}/user/contacts`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const mapped = res.data.map((u) => ({
+                id: u._id,
+                name: u.name,
+                role: u.role,
+                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=1D5FAD&color=fff&size=128`,
+            }));
+            setContacts(mapped);
+        } catch (err) {
+            console.error("Error fetching contacts:", err);
+        } finally {
+            setLoadingContacts(false);
+        }
+    };
+
     useEffect(() => {
-        if (userRole !== "user") return;
-        const fetchContacts = async () => {
-            setLoadingContacts(true);
-            try {
-                const token = await AsyncStorage.getItem("userToken");
-                if (!token) return;
-                const res = await axios.get(`${API_BASE}/user/contacts`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                // Map to the shape expected by renderUserChatItem
-                const mapped = res.data.map((u) => ({
-                    id: u._id,
-                    name: u.name,
-                    lastMessage: u.role === "admin" ? "Admin · Tap to chat" : "Agent · Tap to chat",
-                    time: "",
-                    unreadCount: 0,
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=1D5FAD&color=fff&size=128`,
-                }));
-                setUserContacts(mapped);
-            } catch (err) {
-                console.error("Error fetching contacts:", err);
-            } finally {
-                setLoadingContacts(false);
-            }
-        };
+        fetchConversations();
         fetchContacts();
-    }, [userRole]);
 
-    // Fetch real active conversations for admins/agents
-    useEffect(() => {
-        if (userRole === "user") return;
-        
-        const fetchActiveConversations = async () => {
-            setLoadingAdminMessages(true);
-            try {
+        // 🎧 Socket: join room
+        const setupSocket = async () => {
+             try {
                 const token = await AsyncStorage.getItem("userToken");
-                if (!token) return;
-                const res = await axios.get(`${API_BASE}/chat/active-conversations`, {
-                    headers: { Authorization: `Bearer ${token}` },
+                const res = await axios.get(`${API_BASE}/user/profile`, { 
+                    headers: { Authorization: `Bearer ${token}` } 
                 });
-                
-                const mapped = res.data.map(conv => ({
-                    id: conv.id,
-                    name: conv.name,
-                    lastMessage: conv.lastMessage,
-                    time: formatDate(conv.timestamp),
-                    unreadCount: 0, // Backend could be updated later to provide actual unread counts
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(conv.name)}&background=1D5FAD&color=fff&size=128`,
-                    agent: conv.role === "agent" ? "Direct Chat" : "User",
-                    ref: "Message"
-                }));
-                
-                setAdminMessages(mapped);
-            } catch (err) {
-                console.error("Error fetching active conversations:", err);
-            } finally {
-                setLoadingAdminMessages(false);
-            }
-        };
+                if (res.data._id) {
+                    socket.emit("joinRoom", res.data._id);
+                    if (res.data.role === 'admin') socket.emit("joinRoom", "admin");
+                }
+             } catch (e) {
+                 console.error("Socket join room error:", e);
+             }
+        }
+        setupSocket();
 
-        fetchActiveConversations();
-
-        // 🎧 Listen for new messages to refresh the list
         socket.on("receiveMessage", (message) => {
-            fetchActiveConversations();
+            fetchConversations(false); // Silent refresh
         });
 
         return () => {
             socket.off("receiveMessage");
         };
-    }, [userRole]);
+    }, []);
+
+    const filteredConversations = conversations.filter(c => 
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
 
 
-    const currentMessages = userRole === "admin" ? adminMessages : userContacts;
 
-
-    const renderUserChatItem = ({ item }) => (
+    const renderChatItem = ({ item }) => (
         <TouchableOpacity
             style={[styles.chatItem, { paddingVertical: verticalScale(15) }]}
             onPress={() =>
@@ -201,8 +216,8 @@ export default function MessagesScreen({ navigation }) {
                 <View style={[styles.adminHeader, { paddingHorizontal: scale(20), paddingTop: verticalScale(20), paddingBottom: verticalScale(25) }]}>
                     <View style={styles.adminHeaderTop}>
                         <View>
-                            <Text style={[styles.adminHeaderTitle, { fontSize: scale(24) }]}>Chat</Text>
-                            <Text style={[styles.adminUnreadStatus, { fontSize: scale(14), marginTop: verticalScale(2) }]}>3 unread messages</Text>
+                            <Text style={[styles.adminHeaderTitle, { fontSize: scale(24) }]}>Admin Chat</Text>
+                            <Text style={[styles.adminUnreadStatus, { fontSize: scale(14), marginTop: verticalScale(2) }]}>{conversations.length} Active Threads</Text>
                         </View>
                         <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
                             <Feather name="user" size={scale(24)} color="#FFF" />
@@ -212,7 +227,7 @@ export default function MessagesScreen({ navigation }) {
                         <Ionicons name="search-outline" size={scale(18)} color="#94A3B8" />
                         <TextInput
                             style={[styles.adminSearchInput, { fontSize: scale(15), marginLeft: scale(10) }]}
-                            placeholder="Search conversations"
+                            placeholder="Search conversations..."
                             placeholderTextColor="#94A3B8"
                             value={searchQuery}
                             onChangeText={setSearchQuery}
@@ -222,11 +237,15 @@ export default function MessagesScreen({ navigation }) {
             );
         }
         return (
-            <SafeAreaView edges={['top']}>
+            <SafeAreaView edges={['top']} style={{ backgroundColor: '#FFF' }}>
                 <View style={[styles.topBar, { paddingHorizontal: scale(20), paddingTop: verticalScale(10), paddingBottom: verticalScale(10) }]}>
-                    <View style={{ width: scale(24) }} />
+                    <TouchableOpacity onPress={() => setShowContactsModal(true)}>
+                        <Feather name="plus-circle" size={scale(24)} color="#1D5FAD" />
+                    </TouchableOpacity>
                     <Text style={[styles.headerTitle, { fontSize: scale(20) }]}>Messages</Text>
-                    <View style={{ width: scale(24) }} />
+                    <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+                        <Feather name="user" size={scale(24)} color="#1D5FAD" />
+                    </TouchableOpacity>
                 </View>
             </SafeAreaView>
         );
@@ -236,16 +255,86 @@ export default function MessagesScreen({ navigation }) {
         <View style={styles.container}>
             <StatusBar barStyle={userRole === "admin" ? "light-content" : "dark-content"} backgroundColor={userRole === "admin" ? "#1D5FAD" : "#FFF"} />
 
+            <CustomAlert
+                visible={alertConfig.visible}
+                title={alertConfig.title}
+                message={alertConfig.message}
+                onClose={() => setAlertConfig({ ...alertConfig, visible: false })}
+            />
+
             {renderHeader()}
 
-            <FlatList
-                data={currentMessages}
-                renderItem={userRole === "admin" ? renderAdminChatItem : renderUserChatItem}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{ paddingHorizontal: scale(20) }}
-                ItemSeparatorComponent={() => <View style={styles.separator} />}
-                showsVerticalScrollIndicator={false}
-            />
+            {loading ? (
+                <View style={[styles.centerContainer, { paddingTop: 100 }]}>
+                    <ActivityIndicator size="large" color="#1D5FAD" />
+                </View>
+            ) : filteredConversations.length === 0 ? (
+                <View style={styles.centerContainer}>
+                    <Ionicons name="chatbubbles-outline" size={scale(60)} color="#CBD5E1" />
+                    <Text style={[styles.emptyText, { marginTop: 10 }]}>No conversations found</Text>
+                    {userRole === 'user' && (
+                        <TouchableOpacity 
+                            style={[styles.newChatBtn, { marginTop: 20, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10 }]}
+                            onPress={() => setShowContactsModal(true)}
+                        >
+                            <Text style={styles.newChatBtnText}>Start New Chat</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+            ) : (
+                <FlatList
+                    data={filteredConversations}
+                    renderItem={userRole === "admin" ? renderAdminChatItem : renderChatItem}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={{ paddingHorizontal: scale(20), paddingBottom: 100 }}
+                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                    showsVerticalScrollIndicator={false}
+                />
+            )}
+
+            {/* Contacts Modal */}
+            <Modal
+                visible={showContactsModal}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setShowContactsModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContent, { height: height * 0.7 }]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Choose Contact</Text>
+                            <TouchableOpacity onPress={() => setShowContactsModal(false)}>
+                                <Ionicons name="close" size={28} color="#000" />
+                            </TouchableOpacity>
+                        </View>
+                        
+                        {loadingContacts ? (
+                            <ActivityIndicator size="large" color="#1D5FAD" style={{ marginTop: 50 }} />
+                        ) : (
+                            <FlatList
+                                data={contacts}
+                                keyExtractor={(item) => item.id}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity 
+                                        style={styles.contactItem}
+                                        onPress={() => {
+                                            setShowContactsModal(false);
+                                            navigation.navigate("ChatScreen", { person: item });
+                                        }}
+                                    >
+                                        <Image source={{ uri: item.avatar }} style={styles.contactAvatar} />
+                                        <View>
+                                            <Text style={styles.contactName}>{item.name}</Text>
+                                            <Text style={styles.contactRole}>{item.role === 'admin' ? 'Support Admin' : 'Property Agent'}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                )}
+                                contentContainerStyle={{ paddingBottom: 30 }}
+                            />
+                        )}
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -393,5 +482,67 @@ const styles = StyleSheet.create({
     },
     adminMessagePreview: {
         color: "#475569",
+    },
+    centerContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingBottom: 100,
+    },
+    emptyText: {
+        color: "#94A3B8",
+        fontSize: 16,
+    },
+    newChatBtn: {
+        backgroundColor: "#1D5FAD",
+    },
+    newChatBtnText: {
+        color: "#FFF",
+        fontWeight: "bold",
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end',
+    },
+    modalContent: {
+        backgroundColor: '#FFF',
+        borderTopLeftRadius: 25,
+        borderTopRightRadius: 25,
+        padding: 20,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#1E293B',
+    },
+    contactItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F1F5F9',
+    },
+    contactAvatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight: 15,
+        backgroundColor: '#F1F5F9',
+    },
+    contactName: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#1E293B',
+    },
+    contactRole: {
+        fontSize: 13,
+        color: '#64748B',
     },
 });

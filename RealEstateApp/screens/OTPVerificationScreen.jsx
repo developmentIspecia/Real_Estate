@@ -103,6 +103,7 @@ export default function OTPVerificationScreen({ route, navigation }) {
       await AsyncStorage.setItem("userRole", res.role);
       setAuthToken(res.token);
 
+      // Route both users and admins to the role-aware UserDashboard which contains the updated UI
       navigation.replace("UserStack", { screen: "UserDashboard" });
     } catch (err) {
       setError(err.response?.data?.message || "Invalid code. Please try again.");

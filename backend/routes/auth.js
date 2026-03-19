@@ -26,6 +26,7 @@ router.post("/signup", async (req, res) => {
 
 
     email = email.toLowerCase().trim();
+    password = password.trim();
 
     const existingUser = await User.findOne({ email });
     if (existingUser)
@@ -71,21 +72,22 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Email and password required" });
 
     email = email.toLowerCase().trim();
+    password = password.trim();
 
     const user = await User.findOne({ email });
     if (!user) {
-      console.log(`[AUTH] Login failed: User not found for email: ${email}`);
+      console.log(`[AUTH] Login failed: User not found for email: '${email}'`);
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // ⚠️ If admin password is not hashed (manual DB insert)
-    const isMatch =
-      user.role === "admin"
-        ? password === user.password || (await bcrypt.compare(password, user.password))
-        : await bcrypt.compare(password, user.password);
+    // ⚠️ Robust password matching (handles both bcrypt and plain-text for all roles)
+    const isBcrypt = user.password && user.password.startsWith("$2");
+    const isMatch = isBcrypt 
+      ? await bcrypt.compare(password, user.password)
+      : password === user.password;
 
     if (!isMatch) {
-      console.log(`[AUTH] Login failed: Password mismatch for email: ${email}`);
+      console.log(`[AUTH] Login failed: Password mismatch for email: '${email}'. Hashed: ${isBcrypt}`);
       return res.status(400).json({ message: "Invalid credentials" });
     }
 

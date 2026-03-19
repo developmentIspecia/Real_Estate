@@ -50,10 +50,10 @@ export default function EditProfileScreen({ navigation }) {
     };
 
     useEffect(() => {
-        fetchProfile();
+        loadUserData();
     }, []);
 
-    const fetchProfile = async () => {
+    const loadUserData = async () => {
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) return;
@@ -63,8 +63,8 @@ export default function EditProfileScreen({ navigation }) {
             setFormData({
                 name: res.name || "",
                 email: res.email || "",
-                phone: res.phone || "+1 (555) 123-4567",
-                location: res.location || "New York, NY",
+                phone: res.phone || "",
+                location: res.location || "",
                 bio: res.bio || "",
                 profilePhoto: res.profilePhoto || "",
             });
@@ -72,7 +72,7 @@ export default function EditProfileScreen({ navigation }) {
             const role = await AsyncStorage.getItem("userRole");
             if (role) setUserRole(role);
         } catch (err) {
-            console.error("Error fetching profile:", err);
+            console.error("Error loading user data:", err);
         }
     };
 
@@ -251,18 +251,16 @@ export default function EditProfileScreen({ navigation }) {
                         scale={scale}
                         verticalScale={verticalScale}
                     />
-                    {userRole !== "admin" && (
-                        <InputField
-                            label="Bio"
-                            value={formData.bio}
-                            onChangeText={(text) => setFormData({ ...formData, bio: text })}
-                            icon="information-circle-outline"
-                            placeholder="Tell us about yourself..."
-                            multiline
-                            scale={scale}
-                            verticalScale={verticalScale}
-                        />
-                    )}
+                    <InputField
+                        label="Bio"
+                        value={formData.bio}
+                        onChangeText={(text) => setFormData({ ...formData, bio: text })}
+                        icon="information-circle-outline"
+                        placeholder="Tell us about yourself..."
+                        multiline
+                        scale={scale}
+                        verticalScale={verticalScale}
+                    />
                 </ScrollView>
             </KeyboardAvoidingView>
 

@@ -4,6 +4,7 @@ import Property from "../models/Property.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import streamifier from "streamifier";
+import authMiddleware from "../middleware/auth.js";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" }); // temporary storage
@@ -14,7 +15,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-router.post("/add", upload.array("images", 10), async (req, res) => {
+router.post("/add", authMiddleware, upload.array("images", 10), async (req, res) => {
   try {
     const uploadedImages = [];
     for (const file of req.files) {
@@ -30,6 +31,7 @@ router.post("/add", upload.array("images", 10), async (req, res) => {
       price: req.body.price,
       contact: req.body.contact,
       images: uploadedImages,
+      agent: req.user.id, // Set the agent from decoded token
     });
     
     // 📢 Real-time update
@@ -63,6 +65,18 @@ router.get("/category/:category", async (req, res) => {
     res.json(properties);
   } catch (err) {
     console.error("Error fetching properties by category:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ---------------- Get Properties by Agent ----------------
+router.get("/agent/:agentId", async (req, res) => {
+  try {
+    const { agentId } = req.params;
+    const properties = await Property.find({ agent: agentId }).sort({ createdAt: -1 });
+    res.json(properties);
+  } catch (err) {
+    console.error("Error fetching properties by agent:", err);
     res.status(500).json({ message: "Server error" });
   }
 });

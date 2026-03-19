@@ -52,10 +52,65 @@ router.get("/info", async (req, res) => {
 // ---------------- GET ALL USERS ----------------
 router.get("/users", async (req, res) => {
   try {
-    const users = await User.find({ role: { $in: ["user", "agent"] } }).select("name email role");
+    const users = await User.find({ role: { $in: ["user", "agent"] } }).select("name email role isBlocked");
     res.json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ---------------- GET SINGLE USER DETAIL ----------------
+router.get("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user detail:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ---------------- BLOCK/UNBLOCK USER ----------------
+router.put("/users/:id/block", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    user.isBlocked = !user.isBlocked;
+    await user.save();
+    
+    // 📢 Socket update
+    if (req.io) {
+      req.io.emit("userStatusChanged", { userId: user._id, isBlocked: user.isBlocked });
+    }
+    
+    res.json({ message: `User ${user.isBlocked ? "blocked" : "unblocked"} successfully`, isBlocked: user.isBlocked });
+  } catch (err) {
+    console.error("Error blocking user:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ---------------- DELETE USER ----------------
+router.delete("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    // Also delete their properties if they were an agent? 
+    // Usually better to just unassign or mark as inactive.
+    await Property.deleteMany({ agent: req.params.id });
+
+    // 📢 Socket update
+    if (req.io) {
+        req.io.emit("userDeleted", req.params.id);
+    }
+    
+    res.json({ message: "User and their properties removed successfully" });
+  } catch (err) {
+    console.error("Error deleting user:", err);
     res.status(500).json({ message: "Server error" });
   }
 });

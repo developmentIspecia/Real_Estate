@@ -41,6 +41,7 @@ export default function UsersScreen({ navigation }) {
                     listings: 0, // Listing counts could be added to backend aggregation later
                     role: u.role === "user" ? "customer" : u.role,
                     avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random&color=fff&size=128`,
+                    isBlocked: u.isBlocked,
                 }));
                 
                 setUsers(mappedUsers);
@@ -112,15 +113,15 @@ export default function UsersScreen({ navigation }) {
             </View>
             <View style={[
                 styles.roleBadge,
-                item.role === "agent" ? styles.agentBadge : styles.customerBadge,
+                item.isBlocked ? styles.blockedBadge : (item.role === "agent" ? styles.agentBadge : styles.customerBadge),
                 { paddingHorizontal: scale(10), paddingVertical: verticalScale(4), borderRadius: scale(12) }
             ]}>
                 <Text style={[
                     styles.roleText,
-                    item.role === "agent" ? styles.agentBadgeText : styles.customerBadgeText,
+                    item.isBlocked ? styles.blockedBadgeText : (item.role === "agent" ? styles.agentBadgeText : styles.customerBadgeText),
                     { fontSize: scale(12) }
                 ]}>
-                    {item.role}
+                    {item.isBlocked ? "blocked" : item.role}
                 </Text>
             </View>
         </TouchableOpacity>
@@ -314,5 +315,11 @@ const styles = StyleSheet.create({
     },
     agentBadgeText: {
         color: "#16A34A",
+    },
+    blockedBadge: {
+        backgroundColor: "#FEE2E2",
+    },
+    blockedBadgeText: {
+        color: "#EF4444",
     },
 });
