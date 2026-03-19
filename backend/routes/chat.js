@@ -10,8 +10,8 @@ const router = express.Router();
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const messages = await Chat.find()
-      .populate("sender", "name email role")
-      .populate("receiver", "name email role")
+      .populate("sender", "name email role profilePhoto")
+      .populate("receiver", "name email role profilePhoto")
       .sort({ timestamp: 1 });
     res.json(messages);
   } catch (err) {
@@ -44,7 +44,21 @@ router.get("/active-conversations", authMiddleware, async (req, res) => {
             ]
           },
           lastMessage: { $first: "$message" },
-          timestamp: { $first: "$timestamp" }
+          timestamp: { $first: "$timestamp" },
+          unreadCount: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$receiver", userId] },
+                    { $eq: ["$read", false] }
+                  ]
+                },
+                1,
+                0
+              ]
+            }
+          }
         }
       }
     ]);
@@ -52,14 +66,16 @@ router.get("/active-conversations", authMiddleware, async (req, res) => {
     // Populate user details for each partner
     const result = await Promise.all(
       partners.map(async (p) => {
-        const userData = await User.findById(p._id).select("name email role");
+        const userData = await User.findById(p._id).select("name email role profilePhoto");
         if (!userData) return null;
         return {
           id: userData._id,
           name: userData.name,
           role: userData.role,
+          profilePhoto: userData.profilePhoto,
           lastMessage: p.lastMessage,
           timestamp: p.timestamp,
+          unreadCount: p.unreadCount,
         };
       })
     );
@@ -83,8 +99,8 @@ router.get("/conversation/:partnerId", authMiddleware, async (req, res) => {
         { sender: partnerId, receiver: userId },
       ],
     })
-      .populate("sender", "name email role")
-      .populate("receiver", "name email role")
+      .populate("sender", "name email role profilePhoto")
+      .populate("receiver", "name email role profilePhoto")
       .sort({ timestamp: 1 });
 
     res.json(messages);
@@ -137,6 +153,24 @@ router.post("/", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error("Chat send error:", err);
     res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+// Mark messages as read
+router.put("/read/:partnerId", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const partnerId = req.params.partnerId;
+
+    await Chat.updateMany(
+      { sender: partnerId, receiver: userId, read: false },
+      { $set: { read: true } }
+    );
+
+    res.json({ message: "Messages marked as read" });
+  } catch (err) {
+    console.error("Mark as read error:", err);
+    res.status(500).json({ error: "Failed to mark messages as read" });
   }
 });
 

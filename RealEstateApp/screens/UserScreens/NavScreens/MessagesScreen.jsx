@@ -75,13 +75,13 @@ export default function MessagesScreen({ navigation }) {
                 name: conv.name,
                 lastMessage: conv.lastMessage,
                 time: formatDate(conv.timestamp),
-                unreadCount: 0,
-                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(conv.name)}&background=1D5FAD&color=fff&size=128`,
+                unreadCount: conv.unreadCount || 0,
+                avatar: conv.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(conv.name)}&background=1D5FAD&color=fff&size=128`,
                 role: conv.role,
                 timestamp: conv.timestamp,
                 agent: conv.role === "agent" ? "Direct Chat" : "User",
                 ref: "Message"
-            }));
+            })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             setConversations(mapped);
         } catch (err) {
@@ -102,7 +102,7 @@ export default function MessagesScreen({ navigation }) {
                 id: u._id,
                 name: u.name,
                 role: u.role,
-                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=1D5FAD&color=fff&size=128`,
+                avatar: u.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=1D5FAD&color=fff&size=128`,
             }));
             setContacts(mapped);
         } catch (err) {
@@ -155,7 +155,7 @@ export default function MessagesScreen({ navigation }) {
             style={[styles.chatItem, { paddingVertical: verticalScale(15) }]}
             onPress={() =>
                 userRole === "admin"
-                    ? navigation.navigate("AdminChatScreen", { userId: item.id, userName: item.name })
+                    ? navigation.navigate("AdminChatScreen", { userId: item.id, userName: item.name, profilePhoto: item.avatar })
                     : navigation.navigate("ChatScreen", { person: item })
             }
         >
@@ -184,7 +184,7 @@ export default function MessagesScreen({ navigation }) {
             style={[styles.adminChatItem, { paddingVertical: verticalScale(16) }]}
             onPress={() =>
                 userRole === "admin"
-                    ? navigation.navigate("AdminChatScreen", { userId: item.id, userName: item.name })
+                    ? navigation.navigate("AdminChatScreen", { userId: item.id, userName: item.name, profilePhoto: item.avatar })
                     : navigation.navigate("ChatScreen", { person: item })
             }
         >

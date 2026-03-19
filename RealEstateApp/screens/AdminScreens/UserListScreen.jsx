@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
@@ -60,7 +61,11 @@ export default function UserListScreen({ navigation, isTab = false }) {
           renderItem={({ item }) => (
             <View style={styles.userCard}>
               <View style={styles.avatarCircle}>
-                <Text style={styles.avatarInitial}>{item.name[0].toUpperCase()}</Text>
+                {item.profilePhoto ? (
+                  <Image source={{ uri: item.profilePhoto }} style={styles.avatarImage} />
+                ) : (
+                  <Text style={styles.avatarInitial}>{item.name[0].toUpperCase()}</Text>
+                )}
               </View>
               <View style={styles.userInfo}>
                 <Text style={styles.name}>{item.name}</Text>
@@ -130,6 +135,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#64748B",
+  },
+  avatarImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 22.5,
   },
   userInfo: {
     flex: 1,

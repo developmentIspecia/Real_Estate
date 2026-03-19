@@ -17,7 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io } from "socket.io-client";
-import { api } from "../../api/api";
+import { api, markMessagesAsRead, setAuthToken } from "../../api/api";
 import CustomAlert from "../../components/CustomAlert";
 
 const { width, height } = Dimensions.get("window");
@@ -25,9 +25,9 @@ const scale = (size) => (width / 375) * size;
 const verticalScale = (size) => (height / 812) * size;
 
 export default function ChatScreen({ route, navigation }) {
-    const { userId, userName } = route.params || {};
+    const { userId, userName, profilePhoto } = route.params || {};
     const { width, height } = useWindowDimensions();
-    const partnerAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || "User")}&background=1D5FAD&color=fff&size=128`;
+    const partnerAvatar = profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || "User")}&background=1D5FAD&color=fff&size=128`;
 
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
@@ -41,6 +41,7 @@ export default function ChatScreen({ route, navigation }) {
       const t = await AsyncStorage.getItem("userToken");
       if (!t) return;
       setToken(t);
+      setAuthToken(t);
     };
     loadToken();
   }, []);
@@ -56,6 +57,9 @@ export default function ChatScreen({ route, navigation }) {
         });
         setMessages(res.data);
         setTimeout(() => flatListRef.current?.scrollToEnd(), 200);
+
+        // Mark messages as read since the admin is viewing the chat
+        await markMessagesAsRead(userId);
       } catch (err) {
         console.error("Fetch messages error:", err);
       }

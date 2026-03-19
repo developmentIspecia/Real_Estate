@@ -1,3 +1,4 @@
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -10,13 +11,12 @@ import {
   Platform,
   Image,
   Dimensions,
-  SafeAreaView,
   StatusBar,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { io } from "socket.io-client";
-import { api } from "../../api/api";
+import { api, markMessagesAsRead, setAuthToken } from "../../api/api";
 import CustomAlert from "../../components/CustomAlert";
 
 const { width, height } = Dimensions.get("window");
@@ -41,6 +41,7 @@ export default function ChatScreen({ route, navigation }) {
       const t = await AsyncStorage.getItem("userToken");
       if (!t) return;
       setToken(t);
+      setAuthToken(t);
     };
     loadToken();
   }, []);
@@ -56,6 +57,9 @@ export default function ChatScreen({ route, navigation }) {
         });
         setMessages(res.data);
         setTimeout(() => flatListRef.current?.scrollToEnd(), 200);
+        
+        // Mark messages as read since the user is viewing the chat
+        await markMessagesAsRead(partnerId);
       } catch (err) {
         console.error("Fetch messages error:", err);
       }

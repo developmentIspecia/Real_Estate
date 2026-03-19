@@ -29,6 +29,7 @@ export const signup = async (data) => {
     lastName: data.lastName ? data.lastName.trim() : "",
     email: data.email.trim().toLowerCase(),
     password: data.password.trim(),
+    phone: data.phone ? data.phone.trim() : "",
   });
   return res.data;
 };
@@ -140,4 +141,12 @@ export const deleteProperty = async (id) => {
   const res = await api.delete(`/properties/${id}`);
   return res.data;
 };
+
+// Mark messages as read
+export const markMessagesAsRead = async (partnerId) => {
+  if (!partnerId) return { message: "No partnerId provided" };
+  const res = await api.put(`/chat/read/${partnerId}`);
+  return res.data;
+};
+
 

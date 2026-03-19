@@ -20,7 +20,7 @@ const generateToken = (payload) =>
 // ------------------ SIGNUP ------------------
 router.post("/signup", async (req, res) => {
   try {
-    let { name, middleName, lastName, email, password } = req.body;
+    let { name, middleName, lastName, email, password, phone } = req.body;
     if (!name || !email || !password)
       return res.status(400).json({ message: "Name, email, and password required" });
 
@@ -45,6 +45,7 @@ router.post("/signup", async (req, res) => {
         lastName: lastName || "",
         email,
         password: hashedPassword,
+        phone: phone || "",
         role: "user",
       },
     });

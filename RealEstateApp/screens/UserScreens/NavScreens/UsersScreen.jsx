@@ -40,7 +40,7 @@ export default function UsersScreen({ navigation }) {
                     email: u.email,
                     listings: 0, // Listing counts could be added to backend aggregation later
                     role: u.role === "user" ? "customer" : u.role,
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random&color=fff&size=128`,
+                    avatar: u.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=1D5FAD&color=fff&size=128`,
                     isBlocked: u.isBlocked,
                 }));
                 
@@ -95,7 +95,7 @@ export default function UsersScreen({ navigation }) {
             style={styles.userCard}
             onPress={() => {
                 const screenName = item.role === "agent" ? "AgentScreen" : "CustomerScreen";
-                navigation.navigate(screenName, { userId: item.id });
+                navigation.navigate(screenName, { userId: item.id, profilePhoto: item.avatar });
             }}
         >
             <View style={styles.avatarContainer}>

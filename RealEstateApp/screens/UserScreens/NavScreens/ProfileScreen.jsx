@@ -24,6 +24,7 @@ export default function ProfileScreen({ navigation }) {
 
     const [userName, setUserName] = useState("User");
     const [userEmail, setUserEmail] = useState("user@gmail.com");
+    const [userPhone, setUserPhone] = useState("");
     const [userBio, setUserBio] = useState("");
     const [profilePhoto, setProfilePhoto] = useState("");
     const [userRole, setUserRole] = useState("user");
@@ -45,6 +46,7 @@ export default function ProfileScreen({ navigation }) {
 
             setUserName(data?.name || "User");
             setUserEmail(data?.email || "user@gmail.com");
+            setUserPhone(data?.phone || "");
             setUserBio(data?.bio || "");
             setProfilePhoto(data?.profilePhoto || "");
 
@@ -103,6 +105,12 @@ export default function ProfileScreen({ navigation }) {
                             <View style={styles.userNameEmail}>
                                 <Text style={[styles.profileName, { fontSize: scale(22) }]}>{userName}</Text>
                                 <Text style={[styles.profileEmail, { fontSize: scale(14) }]}>{userEmail}</Text>
+                                {userPhone ? (
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: verticalScale(4) }}>
+                                        <Ionicons name="call-outline" size={scale(12)} color="#94A3B8" />
+                                        <Text style={[styles.profileEmail, { fontSize: scale(13), marginLeft: scale(4) }]}>{userPhone}</Text>
+                                    </View>
+                                ) : null}
                             </View>
                         </View>
 

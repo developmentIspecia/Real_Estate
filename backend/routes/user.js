@@ -154,7 +154,7 @@ router.put("/change-password", authMiddleware, async (req, res) => {
 // Get all admins and agents (contacts a user can chat with)
 router.get("/contacts", authMiddleware, async (req, res) => {
   try {
-    const contacts = await User.find({ role: { $in: ["admin", "agent"] } }).select("_id name email role");
+    const contacts = await User.find({ role: { $in: ["admin", "agent"] } }).select("_id name email role profilePhoto");
     res.json(contacts);
   } catch (err) {
     console.error("Get contacts error:", err);

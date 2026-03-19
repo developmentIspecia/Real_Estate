@@ -52,7 +52,7 @@ router.get("/info", async (req, res) => {
 // ---------------- GET ALL USERS ----------------
 router.get("/users", async (req, res) => {
   try {
-    const users = await User.find({ role: { $in: ["user", "agent"] } }).select("name email role isBlocked");
+    const users = await User.find({ role: { $in: ["user", "agent"] } }).select("name email role isBlocked profilePhoto");
     res.json(users);
   } catch (err) {
     console.error("Error fetching users:", err);

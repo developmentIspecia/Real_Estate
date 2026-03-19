@@ -1,3 +1,4 @@
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useState } from "react";
 import {
     View,
@@ -5,7 +6,6 @@ import {
     StyleSheet,
     TouchableOpacity,
     ScrollView,
-    SafeAreaView,
     Dimensions,
     useWindowDimensions,
     ActivityIndicator,
@@ -230,7 +230,7 @@ export default function CustomerScreen() {
 
                     <TouchableOpacity
                         style={[styles.chatButton, { paddingVertical: verticalScale(12), borderRadius: scale(10), marginTop: verticalScale(12) }]}
-                        onPress={() => navigation.navigate("AdminChatScreen", { userId: userData._id, userName: userData.name })}
+                        onPress={() => navigation.navigate("AdminChatScreen", { userId: userData._id, userName: userData.name, profilePhoto: avatarUrl })}
                     >
                          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <Ionicons name="chatbubble-outline" size={scale(20)} color="#FFF" />
