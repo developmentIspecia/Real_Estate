@@ -90,6 +90,8 @@ export default function SignupScreen({ navigation }) {
       } else {
         await AsyncStorage.setItem("userToken", res.token);
         await AsyncStorage.setItem("userRole", res.role);
+        // Clear any local favorites from previous sessions
+        await AsyncStorage.removeItem("favoriteProperties");
         setAuthToken(res.token);
         navigation.replace(res.role === "admin" ? "AdminStack" : "UserStack", {
           screen: res.role === "admin" ? "AdminDashboard" : "UserDashboard"
@@ -110,9 +112,8 @@ export default function SignupScreen({ navigation }) {
     <SafeAreaView style={[styles.container, { backgroundColor: "#1D5FAD", paddingHorizontal: scale(20), paddingVertical: verticalScale(10) }]}>
       <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : null}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, justifyContent: "center" }}
       >
         <TouchableOpacity
           style={[styles.backButton, { position: "absolute", top: 0, left: 0, width: scale(40), height: scale(40), zIndex: 1 }]}

@@ -61,6 +61,7 @@ export default function ProfileScreen({ navigation }) {
     const handleLogout = async () => {
         setLogoutModalVisible(false);
         await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem("favoriteProperties");
         navigation.replace("Login");
     };
 
@@ -96,10 +97,9 @@ export default function ProfileScreen({ navigation }) {
                                         style={[styles.avatarImage, { borderRadius: scale(40) }]}
                                     />
                                 ) : (
-                                    <Image
-                                        source={{ uri: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" }}
-                                        style={[styles.avatarImage, { borderRadius: scale(40) }]}
-                                    />
+                                    <View style={[styles.avatarImage, { borderRadius: scale(40), backgroundColor: "#F1F5F9", justifyContent: "center", alignItems: "center" }]}>
+                                        <Ionicons name="person" size={scale(40)} color="#CBD5E1" />
+                                    </View>
                                 )}
                             </View>
                             <View style={styles.userNameEmail}>

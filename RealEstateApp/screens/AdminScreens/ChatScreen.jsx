@@ -196,8 +196,15 @@ export default function ChatScreen({ route, navigation }) {
             />
           </View>
           <TouchableOpacity
-            style={[styles.sendButton, { width: scale(45), height: scale(45), borderRadius: scale(12) }]}
+            style={[
+              styles.sendButton,
+              {
+                backgroundColor: messageText.trim() ? "#1B5EAF" : "#95B5E4",
+                opacity: messageText.trim() ? 1 : 0.7
+              }
+            ]}
             onPress={sendMessage}
+            disabled={!messageText.trim()}
           >
             <Feather name="send" size={scale(18)} color="#FFF" />
           </TouchableOpacity>

@@ -18,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_BASE, fetchProfile, updateProfile } from "../../../api/api";
+import { fetchProfile, updateProfile } from "../../../api/api";
 import CustomAlert from "../../../components/CustomAlert";
 
 export default function EditProfileScreen({ navigation }) {
@@ -128,26 +128,13 @@ export default function EditProfileScreen({ navigation }) {
                 formDataPayload.append("profilePhoto", formData.profilePhoto);
             }
 
-            console.log("Sending profile update via fetch to:", `${API_BASE}/user/profile-update`);
-            const response = await fetch(`${API_BASE}/user/profile-update`, {
-                method: "POST",
-                body: formDataPayload,
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Accept": "application/json",
-                },
+            console.log("Sending profile update via updateProfile API");
+            const res = await updateProfile(token, formDataPayload);
+
+            if (Platform.OS !== "web") Vibration.vibrate(50);
+            showAlert("Success", "Profile updated successfully!", () => {
+                navigation.goBack();
             });
-
-            const res = await response.json();
-
-            if (response.ok) {
-                if (Platform.OS !== "web") Vibration.vibrate(50);
-                showAlert("Success", "Profile updated successfully!", () => {
-                    navigation.goBack();
-                });
-            } else {
-                throw new Error(res.message || "Failed to update profile.");
-            }
         } catch (err) {
             console.error("Update profile error:", err);
             showAlert("Error", err.message || "Failed to update profile.");

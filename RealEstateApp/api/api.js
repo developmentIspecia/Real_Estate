@@ -1,11 +1,25 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // 🌍 Global IP (change here only if needed)
-export const GLOBAL_IP = "192.168.1.27";
+export const GLOBAL_IP = "192.168.1.21";
 export const API_BASE = `http://${GLOBAL_IP}:5000/api`;
 
 // Axios instance
 export const api = axios.create({ baseURL: API_BASE });
+
+// Interceptor to handle 401/403 (Unauthorized/Forbidden) errors
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      console.log("[API] Session expired or unauthorized. Clearing tokens.");
+      await AsyncStorage.multiRemove(["userToken", "userRole"]);
+      setAuthToken(null);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Attach/remove auth token globally
 export const setAuthToken = (token) => {

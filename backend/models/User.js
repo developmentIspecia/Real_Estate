@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema({
   role: { type: String, default: "user" },
   isBlocked: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
+  otp: String,
+  otpExpiry: Date,
 });
 
 export default mongoose.model("User", userSchema); // ✅ default export

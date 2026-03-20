@@ -17,8 +17,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { API_BASE } from "../api/api";
+import { api } from "../api/api";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LogoutModal from "../components/LogoutModal";
 import ExitAppModal from "../components/ExitAppModal";
@@ -88,7 +87,7 @@ export default function UserDashboardScreen({ navigation, route }) {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) return navigation.replace("Login");
 
-      const res = await axios.get(`${API_BASE}/user/profile`, {
+      const res = await api.get("/user/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -97,6 +96,10 @@ export default function UserDashboardScreen({ navigation, route }) {
       setUserRole(res.data?.role || "user");
     } catch (err) {
       console.error("Error fetching user:", err);
+      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+        Alert.alert("Session Expired", "Please login again.");
+        navigation.replace("Login");
+      }
     }
   };
 

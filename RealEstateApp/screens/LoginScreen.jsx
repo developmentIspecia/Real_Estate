@@ -73,6 +73,8 @@ export default function LoginScreen({ navigation }) {
                 // Verified user — store token and go straight to dashboard
                 await AsyncStorage.setItem("userToken", res.token);
                 await AsyncStorage.setItem("userRole", res.role);
+                // Clear any local favorites from previous sessions
+                await AsyncStorage.removeItem("favoriteProperties");
                 setAuthToken(res.token);
                 navigation.replace("UserStack", {
                     screen: "UserDashboard",

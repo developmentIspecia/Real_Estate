@@ -6,6 +6,7 @@ import http from "http";
 import { Server } from "socket.io";
 import os from "os";
 
+dotenv.config();
 
 // ---------------- ROUTES ----------------
 import authRoutes from "./routes/auth.js";
@@ -13,10 +14,9 @@ import userRoutes from "./routes/user.js";
 import adminRoutes from "./routes/admin.js";
 import chatRoutes from "./routes/chat.js";
 import propertyRoutes from "./routes/properties.js";
-import uploadRoutes from "./routes/uploadRoutes.js"; // ✅ new upload route
+import uploadRoutes from "./routes/uploadRoutes.js";
 import Chat from "./models/Chat.js";
 
-dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
@@ -27,10 +27,11 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // 📝 Request Logger (for debugging)
 app.use((req, res, next) => {
-  if (req.path === "/api/auth/login") {
-    console.log(`[${new Date().toISOString()}] LOGIN REQUEST:`, {
+  if (req.path === "/api/auth/login" || req.path === "/api/auth/signup") {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}:`, {
       email: req.body.email,
-      passwordLen: req.body.password ? req.body.password.length : 0,
+      name: req.body.name,
+      phone: req.body.phone,
     });
   }
   next();

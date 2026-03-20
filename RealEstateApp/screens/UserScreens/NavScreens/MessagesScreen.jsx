@@ -35,10 +35,7 @@ export default function MessagesScreen({ navigation }) {
     const [userRole, setUserRole] = useState("user");
     const [searchQuery, setSearchQuery] = useState("");
     const [conversations, setConversations] = useState([]);
-    const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loadingContacts, setLoadingContacts] = useState(false);
-    const [showContactsModal, setShowContactsModal] = useState(false);
     const [alertConfig, setAlertConfig] = useState({ visible: false, title: "", message: "" });
 
     const formatDate = (dateString) => {
@@ -91,30 +88,9 @@ export default function MessagesScreen({ navigation }) {
         }
     };
 
-    const fetchContacts = async () => {
-        setLoadingContacts(true);
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            const res = await axios.get(`${API_BASE}/user/contacts`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const mapped = res.data.map((u) => ({
-                id: u._id,
-                name: u.name,
-                role: u.role,
-                avatar: u.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=1D5FAD&color=fff&size=128`,
-            }));
-            setContacts(mapped);
-        } catch (err) {
-            console.error("Error fetching contacts:", err);
-        } finally {
-            setLoadingContacts(false);
-        }
-    };
 
     useEffect(() => {
         fetchConversations();
-        fetchContacts();
 
         // 🎧 Socket: join room
         const setupSocket = async () => {
@@ -239,13 +215,9 @@ export default function MessagesScreen({ navigation }) {
         return (
             <SafeAreaView edges={['top']} style={{ backgroundColor: '#FFF' }}>
                 <View style={[styles.topBar, { paddingHorizontal: scale(20), paddingTop: verticalScale(10), paddingBottom: verticalScale(10) }]}>
-                    <TouchableOpacity onPress={() => setShowContactsModal(true)}>
-                        <Feather name="plus-circle" size={scale(24)} color="#1D5FAD" />
-                    </TouchableOpacity>
+                    <View style={{ width: scale(24) }} />
                     <Text style={[styles.headerTitle, { fontSize: scale(20) }]}>Messages</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-                        <Feather name="user" size={scale(24)} color="#1D5FAD" />
-                    </TouchableOpacity>
+                    <View style={{ width: scale(24) }} />
                 </View>
             </SafeAreaView>
         );
@@ -272,14 +244,6 @@ export default function MessagesScreen({ navigation }) {
                 <View style={styles.centerContainer}>
                     <Ionicons name="chatbubbles-outline" size={scale(60)} color="#CBD5E1" />
                     <Text style={[styles.emptyText, { marginTop: 10 }]}>No conversations found</Text>
-                    {userRole === 'user' && (
-                        <TouchableOpacity 
-                            style={[styles.newChatBtn, { marginTop: 20, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10 }]}
-                            onPress={() => setShowContactsModal(true)}
-                        >
-                            <Text style={styles.newChatBtnText}>Start New Chat</Text>
-                        </TouchableOpacity>
-                    )}
                 </View>
             ) : (
                 <FlatList
@@ -292,49 +256,6 @@ export default function MessagesScreen({ navigation }) {
                 />
             )}
 
-            {/* Contacts Modal */}
-            <Modal
-                visible={showContactsModal}
-                animationType="slide"
-                transparent={true}
-                onRequestClose={() => setShowContactsModal(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { height: height * 0.7 }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Choose Contact</Text>
-                            <TouchableOpacity onPress={() => setShowContactsModal(false)}>
-                                <Ionicons name="close" size={28} color="#000" />
-                            </TouchableOpacity>
-                        </View>
-                        
-                        {loadingContacts ? (
-                            <ActivityIndicator size="large" color="#1D5FAD" style={{ marginTop: 50 }} />
-                        ) : (
-                            <FlatList
-                                data={contacts}
-                                keyExtractor={(item) => item.id}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity 
-                                        style={styles.contactItem}
-                                        onPress={() => {
-                                            setShowContactsModal(false);
-                                            navigation.navigate("ChatScreen", { person: item });
-                                        }}
-                                    >
-                                        <Image source={{ uri: item.avatar }} style={styles.contactAvatar} />
-                                        <View>
-                                            <Text style={styles.contactName}>{item.name}</Text>
-                                            <Text style={styles.contactRole}>{item.role === 'admin' ? 'Support Admin' : 'Property Agent'}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                )}
-                                contentContainerStyle={{ paddingBottom: 30 }}
-                            />
-                        )}
-                    </View>
-                </View>
-            </Modal>
         </View>
     );
 }
@@ -492,57 +413,5 @@ const styles = StyleSheet.create({
     emptyText: {
         color: "#94A3B8",
         fontSize: 16,
-    },
-    newChatBtn: {
-        backgroundColor: "#1D5FAD",
-    },
-    newChatBtnText: {
-        color: "#FFF",
-        fontWeight: "bold",
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'flex-end',
-    },
-    modalContent: {
-        backgroundColor: '#FFF',
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
-        padding: 20,
-    },
-    modalHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#1E293B',
-    },
-    contactItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#F1F5F9',
-    },
-    contactAvatar: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        marginRight: 15,
-        backgroundColor: '#F1F5F9',
-    },
-    contactName: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#1E293B',
-    },
-    contactRole: {
-        fontSize: 13,
-        color: '#64748B',
     },
 });
