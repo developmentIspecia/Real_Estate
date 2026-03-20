@@ -17,6 +17,7 @@ import { Feather, Ionicons, MaterialCommunityIcons, FontAwesome5 } from "@expo/v
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API_BASE } from "../../../api/api";
+import CustomAlert from "../../../components/CustomAlert";
 
 const { width, height } = Dimensions.get("window");
 const scale = (size) => (width / 375) * size;
@@ -34,49 +35,116 @@ export default function ContactAdminScreen({ route, navigation }) {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [message, setMessage] = useState("");
+    const [adminData, setAdminData] = useState({
+        id: "60e10b10f135b91b8f15d9a0", // Fallback ID
+        name: "Admin",
+        avatar: "https://ui-avatars.com/api/?name=Admin&background=1D5FAD&color=fff"
+    });
+    const [loadingAdmin, setLoadingAdmin] = useState(true);
+    const [alertConfig, setAlertConfig] = useState({ visible: false, title: "", message: "" });
+    const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchInitialData = async () => {
             try {
                 const token = await AsyncStorage.getItem("userToken");
                 if (!token) return;
 
-                const res = await axios.get(`${API_BASE}/user/profile`, {
+                // 1. Fetch current user profile for the form
+                const profileRes = await axios.get(`${API_BASE}/user/profile`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                setName(res.data?.name || "");
-                setEmail(res.data?.email || "");
-                setPhone(res.data?.phone || "");
+                setName(profileRes.data?.name || "");
+                setEmail(profileRes.data?.email || "");
+                setPhone(profileRes.data?.phone || "");
+
+                // 2. Fetch real admin/agent for the chat
+                const contactsRes = await axios.get(`${API_BASE}/user/contacts`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                const contacts = contactsRes.data || [];
+                let selectedAdmin = null;
+
+                // Prioritize property agent if ID exists
+                if (property?.agent) {
+                    selectedAdmin = contacts.find(c => c._id === property.agent);
+                }
+
+                // Fallback to first admin if no specific agent found
+                if (!selectedAdmin) {
+                    selectedAdmin = contacts.find(c => c.role === "admin") || contacts[0];
+                }
+
+                if (selectedAdmin) {
+                    setAdminData({
+                        id: selectedAdmin._id,
+                        name: selectedAdmin.name,
+                        avatar: selectedAdmin.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedAdmin.name)}&background=1D5FAD&color=fff`
+                    });
+                }
             } catch (err) {
-                console.error("Error fetching user data:", err);
+                console.error("Error fetching data:", err);
+            } finally {
+                setLoadingAdmin(false);
             }
         };
-        fetchUser();
-    }, []);
+        fetchInitialData();
+    }, [property]);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!message.trim()) {
-            alert("Please enter a message");
+            setAlertConfig({ visible: true, title: "Message Required", message: "Please enter a message to continue." });
             return;
         }
 
-        // We simulate starting a chat with the admin/agent for this property
-        // The real ID should come from property.agentId if the backend provided one
-        const mockAgentId = "60e10b10f135b91b8f15d9a0"; // Using a valid-looking ObjectId for the DB
-        const person = {
-            id: mockAgentId,
-            name: "Sarah Johnson",
-            avatar: "https://randomuser.me/api/portraits/women/44.jpg"
-        };
+        setIsSending(true);
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) {
+                setAlertConfig({ visible: true, title: "Not Logged In", message: "Please login to contact the admin." });
+                return;
+            }
 
-        setMessage("");
-        navigation.navigate("ChatScreen", { person });
+            // Send message to backend
+            await axios.post(`${API_BASE}/chat`, {
+                message: message.trim(),
+                receiverId: adminData.id
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const person = {
+                id: adminData.id,
+                name: adminData.name,
+                avatar: adminData.avatar
+            };
+
+            setMessage("");
+            navigation.navigate("ChatScreen", { person });
+        } catch (err) {
+            console.error("Error sending message:", err);
+            setAlertConfig({ 
+                visible: true, 
+                title: "Send Failed", 
+                message: "We couldn't send your message right now. Please try again later." 
+            });
+        } finally {
+            setIsSending(false);
+        }
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
+
+            <CustomAlert
+                visible={alertConfig.visible}
+                title={alertConfig.title}
+                message={alertConfig.message}
+                onClose={() => setAlertConfig({ ...alertConfig, visible: false })}
+            />
 
             {/* Header */}
             <View style={[styles.header, { paddingHorizontal: scale(20), height: verticalScale(60) }]}>
@@ -92,11 +160,15 @@ export default function ContactAdminScreen({ route, navigation }) {
                 <View style={[styles.agentCard, { margin: scale(20), padding: scale(20), borderRadius: scale(10) }]}>
                     <View style={styles.agentInfoRow}>
                         <View style={[styles.avatarCircle, { width: scale(54), height: scale(54), borderRadius: scale(27) }]}>
-                            <Ionicons name="person" size={scale(30)} color="#FFF" />
+                            {adminData.avatar && adminData.avatar.startsWith('http') ? (
+                                <Image source={{ uri: adminData.avatar }} style={{ width: '100%', height: '100%', borderRadius: scale(27) }} />
+                            ) : (
+                                <Ionicons name="person" size={scale(30)} color="#FFF" />
+                            )}
                         </View>
                         <View style={styles.agentNameDetails}>
-                            <Text style={[styles.agentName, { fontSize: scale(18) }]}>Sarah Johnson</Text>
-                            <Text style={[styles.agentRole, { fontSize: scale(14) }]}>Property Agent</Text>
+                            <Text style={[styles.agentName, { fontSize: scale(18) }]}>{adminData.name}</Text>
+                            <Text style={[styles.agentRole, { fontSize: scale(14) }]}>Property Consultant</Text>
                         </View>
                     </View>
                     <Text style={[styles.agentDesc, { fontSize: scale(13), marginTop: verticalScale(15) }]}>
@@ -177,12 +249,23 @@ export default function ContactAdminScreen({ route, navigation }) {
                     </View>
 
                     <TouchableOpacity
-                        style={[styles.submitBtn, { marginTop: verticalScale(30), paddingVertical: verticalScale(12), borderRadius: scale(10) }]}
+                        style={[
+                            styles.submitBtn, 
+                            { 
+                                marginTop: verticalScale(30), 
+                                paddingVertical: verticalScale(12), 
+                                borderRadius: scale(10),
+                                opacity: isSending ? 0.7 : 1
+                            }
+                        ]}
                         activeOpacity={0.8}
                         onPress={handleSubmit}
+                        disabled={isSending}
                     >
                         <Ionicons name="paper-plane-outline" size={scale(20)} color="#FFF" style={{ marginRight: 8 }} />
-                        <Text style={[styles.submitBtnText, { fontSize: scale(16) }]}>Send Message & Start Chat</Text>
+                        <Text style={[styles.submitBtnText, { fontSize: scale(16) }]}>
+                            {isSending ? "Sending..." : "Send Message & Start Chat"}
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

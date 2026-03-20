@@ -146,12 +146,14 @@ export default function ChatScreen({ route, navigation }) {
           <Ionicons name="arrow-back" size={scale(24)} color="#1F2937" />
         </TouchableOpacity>
 
-        <Text style={styles.headerTitle}>{partnerName}</Text>
-
-        <Image
-          source={{ uri: partnerAvatar }}
-          style={styles.headerAvatar}
-        />
+        <View style={styles.headerInfo}>
+          <Image
+            source={{ uri: partnerAvatar }}
+            style={styles.headerAvatar}
+          />
+          <Text style={styles.headerTitle}>{partnerName}</Text>
+        </View>
+        <View style={{ width: scale(24) }} />
       </View>
 
       <KeyboardAvoidingView
@@ -213,6 +215,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F3F4F6",
   },
+  headerInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    marginLeft: scale(10),
+  },
   backButton: {
     padding: scale(5),
     marginLeft: scale(-5),
@@ -221,8 +229,7 @@ const styles = StyleSheet.create({
     fontSize: scale(18),
     fontWeight: "700",
     color: "#1F2937",
-    textAlign: "center",
-    flex: 1,
+    marginLeft: scale(10),
   },
   headerAvatar: {
     width: scale(36),

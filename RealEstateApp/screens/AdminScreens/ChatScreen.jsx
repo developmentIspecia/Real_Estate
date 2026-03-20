@@ -124,13 +124,13 @@ export default function ChatScreen({ route, navigation }) {
   const renderMessage = ({ item }) => {
     const isMe = item.sender === myUserId || item.sender?._id === myUserId || item.role === 'admin';
     return (
-      <View style={[styles.messageWrapper, isMe ? styles.adminWrapper : styles.userWrapper, { marginVertical: verticalScale(8) }]}>
-        <View style={[styles.messageBubble, isMe ? styles.adminBubble : styles.userBubble, { paddingVertical: verticalScale(10), paddingHorizontal: scale(16), borderRadius: scale(15) }]}>
-          <Text style={[styles.messageText, isMe ? styles.adminText : styles.userText, { fontSize: scale(14), lineHeight: scale(20) }]}>
+      <View style={[styles.messageWrapper, isMe ? styles.adminWrapper : styles.userWrapper]}>
+        <View style={[styles.messageBubble, isMe ? styles.adminBubble : styles.userBubble]}>
+          <Text style={[styles.messageText, isMe ? styles.adminText : styles.userText]}>
             {item.message}
           </Text>
         </View>
-        <Text style={[styles.timestamp, isMe ? styles.adminTimestamp : styles.userTimestamp, { fontSize: scale(11), marginTop: verticalScale(4) }]}>
+        <Text style={[styles.timestamp, isMe ? styles.adminTimestamp : styles.userTimestamp]}>
           {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
       </View>
@@ -139,7 +139,7 @@ export default function ChatScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1B5EAF" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
 
       <CustomAlert
         visible={alertConfig.visible}
@@ -149,47 +149,42 @@ export default function ChatScreen({ route, navigation }) {
       />
 
       {/* Header */}
-      <View style={[styles.header, { height: verticalScale(70), paddingHorizontal: scale(16), borderBottomLeftRadius: scale(12), borderBottomRightRadius: scale(12) }]}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={scale(24)} color="#FFF" />
-          </TouchableOpacity>
+      <View style={[styles.header, { margin: scale(10), borderRadius: scale(15) }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={scale(24)} color="#FFFFFF" />
+        </TouchableOpacity>
 
-          <View style={[styles.headerInfo, { marginLeft: scale(8) }]}>
-            <View style={[styles.avatarContainer, { width: scale(40), height: scale(40), borderRadius: scale(20), borderWidth: scale(1.5), borderColor: '#FFF' }]}>
-              <Image
-                source={{ uri: partnerAvatar }}
-                style={[styles.avatar, { borderRadius: scale(20) }]}
-              />
-            </View>
-
-            <Text style={[styles.headerName, { fontSize: scale(18), marginLeft: scale(10), letterSpacing: scale(0.2) }]} numberOfLines={1}>{userName || "John Smith"}</Text>
-          </View>
+        <View style={styles.headerInfo}>
+          <Image
+            source={{ uri: partnerAvatar }}
+            style={styles.headerAvatar}
+          />
+          <Text style={styles.headerTitle}>{userName || "User"}</Text>
         </View>
+        <View style={{ width: scale(24) }} /> 
       </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === "ios" ? verticalScale(10) : 0}
       >
         <FlatList
           ref={flatListRef}
           data={messages}
           keyExtractor={(item, index) => item._id || index.toString()}
           renderItem={renderMessage}
-          contentContainerStyle={{ padding: scale(20), paddingBottom: verticalScale(20) }}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
+          contentContainerStyle={styles.listContainer}
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
           showsVerticalScrollIndicator={false}
         />
 
         {/* Input Area */}
-        <View style={[styles.inputWrapper, { paddingHorizontal: scale(15), paddingVertical: verticalScale(15), borderTopWidth: scale(1) }]}>
-          <View style={[styles.inputContainer, { height: verticalScale(45), borderRadius: scale(25), marginRight: scale(12) }]}>
+        <View style={styles.inputContainer}>
+          <View style={styles.inputWrapper}>
             <TextInput
-              style={[styles.input, { fontSize: scale(14), paddingHorizontal: scale(15) }]}
+              style={styles.input}
               placeholder="Type a message..."
-              placeholderTextColor="#94A3B8"
+              placeholderTextColor="#9CA3AF"
               value={messageText}
               onChangeText={setMessageText}
               multiline={false}
@@ -197,16 +192,16 @@ export default function ChatScreen({ route, navigation }) {
           </View>
           <TouchableOpacity
             style={[
-              styles.sendButton,
+              styles.sendBtn,
               {
-                backgroundColor: messageText.trim() ? "#1B5EAF" : "#95B5E4",
-                opacity: messageText.trim() ? 1 : 0.7
+                backgroundColor: messageText.trim() ? "#1D5FAD" : "#94B3D8",
+                opacity: messageText.trim() ? 1 : 0.6
               }
             ]}
             onPress={sendMessage}
             disabled={!messageText.trim()}
           >
-            <Feather name="send" size={scale(18)} color="#FFF" />
+            <Feather name="send" size={scale(18)} color="#FFF" style={{ marginLeft: scale(-2) }} />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -217,119 +212,123 @@ export default function ChatScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "#FFFFFF",
   },
   header: {
-    backgroundColor: "#1B5EAF",
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    paddingTop: Platform.OS === 'android' ? verticalScale(10) : verticalScale(5),
-    justifyContent: 'center',
-  },
-  headerContent: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  backButton: {
-    padding: 5,
+    justifyContent: "space-between",
+    paddingHorizontal: scale(15),
+    paddingVertical: verticalScale(10),
+    backgroundColor: "#1B5EAF",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   headerInfo: {
     flexDirection: "row",
     alignItems: "center",
+    flex: 1,
+    marginLeft: scale(10),
   },
-  avatarContainer: {
-    backgroundColor: "#E2E8F0",
-    borderColor: "rgba(255,255,255,0.4)",
-    overflow: "hidden",
+  backButton: {
+    padding: scale(5),
   },
-  avatar: {
-    width: "100%",
-    height: "100%",
-  },
-  headerName: {
+  headerTitle: {
+    fontSize: scale(18),
     fontWeight: "700",
-    color: "#FFF",
+    color: "#FFFFFF",
+    marginLeft: scale(10),
+  },
+  headerAvatar: {
+    width: scale(36),
+    height: scale(36),
+    borderRadius: scale(18),
+    backgroundColor: "#E5E7EB",
+  },
+  listContainer: {
+    padding: scale(20),
+    paddingBottom: verticalScale(20),
   },
   messageWrapper: {
-    maxWidth: "85%",
-  },
-  userWrapper: {
-    alignSelf: "flex-start",
+    marginBottom: verticalScale(15),
+    maxWidth: "80%",
   },
   adminWrapper: {
     alignSelf: "flex-end",
   },
-  messageBubble: {
-    // borderRadius and padding scaled inline
+  userWrapper: {
+    alignSelf: "flex-start",
   },
-  userBubble: {
-    backgroundColor: "#FFFFFF",
-    borderBottomLeftRadius: 2,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
+  messageBubble: {
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(12),
+    borderRadius: scale(18),
   },
   adminBubble: {
-    backgroundColor: "#2062B2",
-    borderBottomRightRadius: 2,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    backgroundColor: "#1D5FAD",
+    borderBottomRightRadius: scale(4),
+  },
+  userBubble: {
+    backgroundColor: "#F3F6F8",
+    borderBottomLeftRadius: scale(4),
   },
   messageText: {
-    // lineHeight scaled inline
-  },
-  userText: {
-    color: "#334155",
-    fontWeight: "400",
+    fontSize: scale(15),
+    lineHeight: scale(20),
   },
   adminText: {
     color: "#FFFFFF",
-    fontWeight: "400",
+  },
+  userText: {
+    color: "#1F2937",
   },
   timestamp: {
-    color: "#94A3B8",
-  },
-  userTimestamp: {
-    alignSelf: 'flex-start',
-    marginLeft: 4,
+    fontSize: scale(11),
+    color: "#9CA3AF",
+    marginTop: verticalScale(4),
   },
   adminTimestamp: {
-    alignSelf: 'flex-end',
-    marginRight: 4,
+    alignSelf: "flex-end",
+    marginRight: scale(4),
   },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderTopColor: "#F1F5F9",
+  userTimestamp: {
+    alignSelf: "flex-start",
+    marginLeft: scale(4),
   },
   inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(15),
+    backgroundColor: "#FFFFFF",
+    borderTopWidth: 1,
+    borderTopColor: "#F3F4F6",
+  },
+  inputWrapper: {
     flex: 1,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: scale(25),
+    paddingHorizontal: scale(20),
+    height: verticalScale(48),
     justifyContent: "center",
   },
   input: {
-    color: "#1E293B",
+    fontSize: scale(15),
+    color: "#1F2937",
     height: '100%',
   },
-  sendButton: {
+  sendBtn: {
     backgroundColor: "#95B5E4",
-    alignItems: "center",
+    width: scale(42),
+    height: scale(42),
+    borderRadius: scale(21),
+    marginLeft: scale(12),
     justifyContent: "center",
-    shadowColor: "#95B5E4",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    alignItems: "center",
   },
 });
-
-
