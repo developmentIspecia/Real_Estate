@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { API_BASE } from "../../../api/api"; // adjust path if needed
+import { API_BASE } from "../../../api/api";
+import { scale, verticalScale } from "../../../utils/responsive";
 
 const PersonalDetails = ({ navigation }) => {
   const [userDetails, setUserDetails] = useState({
@@ -38,27 +40,29 @@ const PersonalDetails = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007BFF" />
+        <ActivityIndicator size="large" color="#1D5FAD" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.header}>Personal Details</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <View style={styles.card}>
+          <Text style={styles.header}>Personal Details</Text>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Full Name:</Text>
-          <Text style={styles.value}>{userDetails.fullName || "N/A"}</Text>
-        </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Full Name:</Text>
+            <Text style={styles.value}>{userDetails.fullName || "N/A"}</Text>
+          </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Email:</Text>
-          <Text style={styles.value}>{userDetails.email || "N/A"}</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>Email:</Text>
+            <Text style={styles.value}>{userDetails.email || "N/A"}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -68,40 +72,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F0F9FF",
+  },
+  content: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: scale(16),
   },
   card: {
     width: "90%",
     backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 24,
+    borderRadius: scale(12),
+    padding: scale(24),
     elevation: 5,
     shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowRadius: scale(10),
     alignItems: "flex-start",
   },
   header: {
-    fontSize: 22,
+    fontSize: scale(22),
     fontWeight: "bold",
-    color: "#007BFF",
-    marginBottom: 20,
+    color: "#1D5FAD",
+    marginBottom: verticalScale(20),
     alignSelf: "center",
   },
   row: {
-    marginBottom: 16,
+    marginBottom: verticalScale(16),
   },
   label: {
-    fontSize: 16,
+    fontSize: scale(16),
     fontWeight: "bold",
     color: "#333",
   },
   value: {
-    fontSize: 18,
+    fontSize: scale(18),
     color: "#555",
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   loadingContainer: {
     flex: 1,

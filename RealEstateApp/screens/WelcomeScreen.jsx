@@ -5,17 +5,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
-  StatusBar,
-  useWindowDimensions,
-  ScrollView, // 1. Added ScrollView
+  ScrollView,
 } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function WelcomeScreen({ navigation }) {
-  const { width, height } = useWindowDimensions();
-
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   return (
     <SafeAreaView style={styles.container}>

@@ -4,17 +4,16 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    useWindowDimensions,
-    StatusBar,
     ScrollView,
+    Dimensions,
 } from "react-native";
+import { scale, verticalScale } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
+
 export default function AdminActionsScreen({ navigation }) {
-    const { width, height } = useWindowDimensions();
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
 
     const adminOptions = [
         {
@@ -79,7 +78,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#F1F5F9",
     },
     backButton: {
-        padding: 5,
+        padding: scale(5),
     },
     headerTitle: {
         fontWeight: "bold",

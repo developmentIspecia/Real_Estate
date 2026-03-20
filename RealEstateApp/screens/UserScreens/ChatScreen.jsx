@@ -7,21 +7,19 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  Dimensions,
+  Image,
   KeyboardAvoidingView,
   Platform,
-  Image,
-  Dimensions,
-  StatusBar,
 } from "react-native";
+import { scale, verticalScale } from "../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { io } from "socket.io-client";
 import { api, markMessagesAsRead, setAuthToken } from "../../api/api";
 import CustomAlert from "../../components/CustomAlert";
 
-const { width, height } = Dimensions.get("window");
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
 
 export default function ChatScreen({ route, navigation }) {
   const { person } = route.params || {};
@@ -158,7 +156,8 @@ export default function ChatScreen({ route, navigation }) {
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? scale(90) : 0}
       >
         <FlatList
           ref={flatListRef}

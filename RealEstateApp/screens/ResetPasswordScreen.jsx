@@ -6,29 +6,23 @@ import {
     TouchableOpacity,
     StyleSheet,
     ActivityIndicator,
-    StatusBar,
     ScrollView,
-    Alert,
-    useWindowDimensions,
     KeyboardAvoidingView,
     Platform,
 } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { resetPassword } from "../api/api";
 
 export default function ResetPasswordScreen({ route, navigation }) {
     const { email, otp } = route?.params || {};
-    const { width, height } = useWindowDimensions();
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-    // Responsive scaling helpers
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
 
     const handleResetPassword = async () => {
         if (!newPassword || !confirmPassword) {

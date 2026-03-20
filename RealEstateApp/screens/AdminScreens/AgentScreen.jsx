@@ -7,11 +7,11 @@ import {
     TouchableOpacity,
     ScrollView,
     Dimensions,
-    useWindowDimensions,
     ActivityIndicator,
     Image,
-    StatusBar,
 } from "react-native";
+import { scale, verticalScale } from "../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { Ionicons, Feather, MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import ActionModal from "../../components/ActionModal";
@@ -20,13 +20,11 @@ import axios from "axios";
 import { API_BASE } from "../../api/api";
 import CustomAlert from "../../components/CustomAlert";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function AgentScreen() {
     const navigation = useNavigation();
     const route = useRoute();
     const { userId } = route.params || {};
-    const { width, height } = useWindowDimensions();
 
     const [userData, setUserData] = useState(null);
     const [listings, setListings] = useState([]);
@@ -38,10 +36,6 @@ export default function AgentScreen() {
         action: null
     });
     const [alertConfig, setAlertConfig] = useState({ visible: false, title: "", message: "" });
-
-    // Responsive scaling helpers
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
 
     const fetchData = async () => {
         setLoading(true);
@@ -292,13 +286,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#F8FAFC",
     },
     scrollContent: {
-        paddingBottom: 40,
+        paddingBottom: verticalScale(40),
     },
     headerBackground: {
         backgroundColor: "#1D5FAD",
         width: "100%",
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
+        borderBottomLeftRadius: scale(15),
+        borderBottomRightRadius: scale(15),
     },
     backButton: {
         position: "absolute",
@@ -306,9 +300,9 @@ const styles = StyleSheet.create({
     },
     profileCard: {
         backgroundColor: "#FFF",
-        marginHorizontal: 20,
-        borderRadius: 20,
-        padding: 24,
+        marginHorizontal: scale(20),
+        borderRadius: scale(20),
+        padding: scale(24),
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
@@ -325,7 +319,7 @@ const styles = StyleSheet.create({
         borderColor: "#E2E8F0",
     },
     profileInfo: {
-        marginLeft: 20,
+        marginLeft: scale(20),
         flex: 1,
     },
     nameRow: {
@@ -337,23 +331,23 @@ const styles = StyleSheet.create({
         color: "#1E293B",
     },
     badge: {
-        borderRadius: 8,
+        borderRadius: scale(8),
         alignSelf: "flex-start",
-        marginTop: 6,
+        marginTop: verticalScale(6),
     },
     badgeText: {
         fontWeight: "600",
     },
     joinedText: {
         color: "#64748B",
-        marginTop: 8,
+        marginTop: verticalScale(8),
     },
     divider: {
         height: 1,
         backgroundColor: "#F1F5F9",
     },
     contactDetails: {
-        marginTop: 5,
+        marginTop: verticalScale(5),
     },
     contactRow: {
         flexDirection: "row",
@@ -365,9 +359,9 @@ const styles = StyleSheet.create({
     },
     statsCard: {
         backgroundColor: "#FFF",
-        marginHorizontal: 20,
-        borderRadius: 20,
-        padding: 24,
+        marginHorizontal: scale(20),
+        borderRadius: scale(20),
+        padding: scale(24),
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
@@ -376,9 +370,9 @@ const styles = StyleSheet.create({
     },
     listingsCard: {
         backgroundColor: "#FFF",
-        marginHorizontal: 20,
-        borderRadius: 20,
-        padding: 24,
+        marginHorizontal: scale(20),
+        borderRadius: scale(20),
+        padding: scale(24),
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
@@ -427,7 +421,7 @@ const styles = StyleSheet.create({
         color: "#1D5FAD",
     },
     actionsContainer: {
-        paddingHorizontal: 20,
+        paddingHorizontal: scale(20),
     },
     blockButton: {
         backgroundColor: "#FECACA",

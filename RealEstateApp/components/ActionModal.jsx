@@ -5,12 +5,10 @@ import {
     StyleSheet,
     TouchableOpacity,
     Modal,
-    useWindowDimensions,
 } from "react-native";
+import { scale, width, height } from "../utils/responsive";
 
 const ActionModal = ({ visible, onClose, onConfirm, title, message }) => {
-    const { width, height } = useWindowDimensions();
-    const scale = (size) => (width / 375) * size;
 
     return (
         <Modal

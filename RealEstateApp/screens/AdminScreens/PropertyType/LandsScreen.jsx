@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { scale, verticalScale } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { getPropertiesByCategory } from "../../../api/api";
 
 export default function LandsScreen() {
@@ -20,10 +23,11 @@ export default function LandsScreen() {
     fetchProperties();
   }, []);
 
-  if (loading) return <Text style={styles.loading}>Loading...</Text>;
+  if (loading) return <Text style={[styles.loading, { fontSize: scale(16), marginTop: verticalScale(50) }]}>Loading...</Text>;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
       <FlatList
         data={properties}
         keyExtractor={(item) => item._id}
@@ -31,20 +35,21 @@ export default function LandsScreen() {
           <View style={styles.card}>
             <Image source={{ uri: item.image }} style={styles.image} />
             <Text style={styles.title}>{item.title}</Text>
-            <Text>Price: ₹{item.price}</Text>
-            <Text>For: {item.propertyFor}</Text>
-            <Text>Contact: {item.contact}</Text>
+            <Text style={{ fontSize: scale(14) }}>Price: ₹{item.price}</Text>
+            <Text style={{ fontSize: scale(14) }}>For: {item.propertyFor}</Text>
+            <Text style={{ fontSize: scale(14) }}>Contact: {item.contact}</Text>
           </View>
         )}
+        contentContainerStyle={{ padding: scale(10) }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
-  card: { backgroundColor: "#E0F7FA", padding: 10, borderRadius: 10, marginBottom: 10 },
-  image: { width: "100%", height: 180, borderRadius: 10, marginBottom: 10 },
-  title: { fontSize: 18, fontWeight: "bold", marginBottom: 5 },
-  loading: { textAlign: "center", marginTop: 50 },
+  container: { flex: 1, backgroundColor: "#FFFFFF" },
+  card: { backgroundColor: "#E0F7FA", padding: scale(10), borderRadius: scale(10), marginBottom: verticalScale(10) },
+  image: { width: "100%", height: verticalScale(180), borderRadius: scale(10), marginBottom: verticalScale(10) },
+  title: { fontSize: scale(18), fontWeight: "bold", marginBottom: verticalScale(5) },
+  loading: { textAlign: "center" },
 });

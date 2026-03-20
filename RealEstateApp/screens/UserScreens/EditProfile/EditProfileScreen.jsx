@@ -6,14 +6,13 @@ import {
     TouchableOpacity,
     TextInput,
     ScrollView,
-    useWindowDimensions,
-    StatusBar,
     Image,
     Platform,
     ActivityIndicator,
     KeyboardAvoidingView,
     Vibration,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -21,10 +20,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchProfile, updateProfile } from "../../../api/api";
 import CustomAlert from "../../../components/CustomAlert";
 
+import { scale, verticalScale } from "../../../utils/responsive";
+
 export default function EditProfileScreen({ navigation }) {
-    const { width, height } = useWindowDimensions();
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
 
     const [userRole, setUserRole] = useState("user");
     const [formData, setFormData] = useState({

@@ -9,9 +9,10 @@ import {
   FlatList,
   Image,
   Dimensions,
-  useWindowDimensions,
   Animated,
 } from "react-native";
+import { scale, verticalScale } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -19,12 +20,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API_BASE } from "../../../api/api";
 
-const { width } = Dimensions.get("window");
 
 export default function SearchScreen({ navigation, route }) {
-  const { width, height } = useWindowDimensions();
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   const [searchQuery, setSearchQuery] = useState("");
 

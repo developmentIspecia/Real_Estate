@@ -8,21 +8,16 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Animated,
   Dimensions,
 } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
 import { api, API_BASE } from "../api/api";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width } = Dimensions.get("window");
 
 export default function AdminDashboardScreen() {
-  const { width, height } = useWindowDimensions();
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   const navigation = useNavigation();
   const [adminInfo, setAdminInfo] = useState({
@@ -295,45 +290,45 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFD54F",
-    padding: 16,
-    paddingTop: 35,
+    padding: scale(16),
+    paddingTop: verticalScale(35),
   },
-  menuIcon: { fontSize: 22, fontWeight: "bold", marginRight: 10 },
-  dashboardTitle: { fontSize: 18, fontWeight: "bold" },
+  menuIcon: { fontSize: scale(22), fontWeight: "bold", marginRight: scale(10) },
+  dashboardTitle: { fontSize: scale(18), fontWeight: "bold" },
   dropdownContainer: { marginVertical: -2 },
   dropdownButton: {
-    padding: 12,
+    padding: scale(12),
     backgroundColor: "#FFF",
-    borderRadius: 8,
+    borderRadius: scale(8),
     borderWidth: 1,
     borderColor: "#CCC",
   },
-  dropdownText: { fontSize: 16 },
+  dropdownText: { fontSize: scale(16) },
   dropdownOptions: {
     backgroundColor: "#FFF",
     borderWidth: 1,
     borderColor: "#CCC",
-    borderRadius: 8,
-    marginTop: 2,
+    borderRadius: scale(8),
+    marginTop: verticalScale(2),
   },
-  dropdownOption: { padding: 12, borderBottomWidth: 1, borderBottomColor: "#EEE" },
+  dropdownOption: { padding: scale(12), borderBottomWidth: 1, borderBottomColor: "#EEE" },
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 20,
   },
-  card: { flex: 0.48, padding: 20, borderRadius: 12, alignItems: "center" },
-  cardCount: { fontSize: 22, fontWeight: "bold", color: "#1F2937" },
-  cardTitle: { fontSize: 14, color: "#4B5563", marginTop: 4, textAlign: "center" },
+  card: { flex: 0.48, padding: scale(20), borderRadius: scale(12), alignItems: "center" },
+  cardCount: { fontSize: scale(22), fontWeight: "bold", color: "#1F2937" },
+  cardTitle: { fontSize: scale(14), color: "#4B5563", marginTop: verticalScale(4), textAlign: "center" },
   chatContainer: { marginTop: 10 },
-  chatHeader: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
+  chatHeader: { fontSize: scale(18), fontWeight: "bold", marginBottom: verticalScale(10) },
   previewItem: {
-    paddingVertical: 10,
+    paddingVertical: verticalScale(10),
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
-  previewName: { fontWeight: "bold", fontSize: 16 },
-  previewMsg: { color: "gray", marginTop: 2 },
+  previewName: { fontWeight: "bold", fontSize: scale(16) },
+  previewMsg: { color: "gray", marginTop: verticalScale(2) },
   sideMenu: {
     position: "absolute",
     top: 0,
@@ -343,7 +338,7 @@ const styles = StyleSheet.create({
   },
   menuHeader: {
     backgroundColor: "#0047FF",
-    paddingBottom: 20,
+    paddingBottom: verticalScale(20),
   },
   profileSection: {
     flexDirection: 'column',

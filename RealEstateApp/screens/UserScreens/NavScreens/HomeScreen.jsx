@@ -6,13 +6,14 @@ import {
     StyleSheet,
     Animated,
     Dimensions,
-    StatusBar,
     ScrollView,
     Image,
     TextInput,
-    useWindowDimensions,
     Modal,
 } from "react-native";
+import { scale, verticalScale, width } from "../../../utils/responsive";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,10 +21,6 @@ import axios from "axios";
 import { API_BASE } from "../../../api/api"; // Corrected path
 import LogoutModal from "../../../components/LogoutModal";
 import socket from "../../../socket/socket";
-
-const { width, height } = Dimensions.get("window");
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
 
 const headerNavItems = [
     { title: "All" },
@@ -33,7 +30,6 @@ const headerNavItems = [
 ];
 
 export default function HomeScreen({ navigation, route }) {
-    const { width, height } = useWindowDimensions();
 
     const [userName, setUserName] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
@@ -532,7 +528,7 @@ export default function HomeScreen({ navigation, route }) {
     );
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <StatusBar barStyle={userRole === 'admin' ? "light-content" : "dark-content"} backgroundColor={userRole === 'admin' ? "#1D5FAD" : "#FFF"} />
 
             {/* Overlay */}
@@ -636,7 +632,7 @@ export default function HomeScreen({ navigation, route }) {
                     </ScrollView>
 
                     <View style={[styles.menuFooter, { paddingHorizontal: scale(20), paddingBottom: verticalScale(30) }]}>
-                        <TouchableOpacity style={[styles.menuLogoutAction, { borderRadius: scale(10), paddingVertical: verticalScale(12) }]} onPress={handleLogout}>
+                        <TouchableOpacity style={[styles.menuLogoutAction, { borderRadius: scale(10), paddingVertical: verticalScale(12) }]} onPress={() => setLogoutModalVisible(true)}>
                             <Text style={[styles.logoutText, { fontSize: scale(16) }]}>Logout</Text>
                         </TouchableOpacity>
                     </View>
@@ -644,13 +640,13 @@ export default function HomeScreen({ navigation, route }) {
             )}
 
             {userRole === 'admin' ? renderAdminUI() : renderUserUI()}
-
+            
             <LogoutModal
                 visible={logoutModalVisible}
                 onClose={() => setLogoutModalVisible(false)}
                 onConfirm={handleLogout}
             />
-        </View>
+        </SafeAreaView>
     );
 }
 

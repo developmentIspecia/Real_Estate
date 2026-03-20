@@ -6,23 +6,21 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
-    StatusBar,
     Dimensions,
-    Alert,
     ActivityIndicator,
     Image,
     Modal,
     FlatList,
+    KeyboardAvoidingView,
 } from "react-native";
+import { scale, verticalScale } from "../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { uploadProperty } from "../../api/api";
 import CustomAlert from "../../components/CustomAlert";
 
-const { width, height } = Dimensions.get("window");
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
 
 export default function UploadPropertyScreen({ navigation }) {
     const [title, setTitle] = useState("");
@@ -52,8 +50,8 @@ export default function UploadPropertyScreen({ navigation }) {
         { label: "House", value: "house" },
         { label: "Flat", value: "flat" },
         { label: "Land", value: "land" },
-        { label: "Commercial", value: "commercial" },
-        { label: "Others", value: "others" },
+        // { label: "Commercial", value: "commercial" },
+        // { label: "Others", value: "others" },
     ];
 
     const handlePickImage = async () => {
@@ -144,7 +142,11 @@ export default function UploadPropertyScreen({ navigation }) {
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#1D5FAD" />
 
-            {/* Header */}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={{ flex: 1 }}
+            >
+                {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={scale(24)} color="#FFF" />
@@ -283,6 +285,7 @@ export default function UploadPropertyScreen({ navigation }) {
                     )}
                 </TouchableOpacity>
             </ScrollView>
+            </KeyboardAvoidingView>
 
             <CustomAlert
                 visible={alertConfig.visible}

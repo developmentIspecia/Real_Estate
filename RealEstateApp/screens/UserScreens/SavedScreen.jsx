@@ -1,7 +1,8 @@
-// screens/UserScreens/SavedScreen.jsx
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { scale, verticalScale } from "../../utils/responsive";
 
 export default function SavedScreen() {
   const navigation = useNavigation();
@@ -40,7 +41,7 @@ export default function SavedScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Saved Properties</Text>
 
       {savedProperties.length === 0 ? (
@@ -53,6 +54,7 @@ export default function SavedScreen() {
           keyExtractor={(item) => item.id}
           renderItem={renderProperty}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: scale(20) }}
         />
       )}
 
@@ -62,7 +64,7 @@ export default function SavedScreen() {
       >
         <Text style={styles.backText}>Go Back</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -71,49 +73,49 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f8f8f8",
-    padding: 20,
   },
   header: {
-    fontSize: 26,
+    fontSize: scale(26),
     fontWeight: "700",
     color: "#222",
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
     textAlign: "center",
+    marginTop: verticalScale(10),
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
+    borderRadius: scale(10),
+    padding: scale(15),
+    marginBottom: verticalScale(15),
     shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowRadius: scale(4),
     elevation: 3,
   },
   title: {
-    fontSize: 18,
+    fontSize: scale(18),
     fontWeight: "700",
-    color: "#007bff",
+    color: "#1D5FAD", // Consistent color
   },
   location: {
-    fontSize: 14,
+    fontSize: scale(14),
     color: "#666",
-    marginTop: 5,
+    marginTop: verticalScale(5),
   },
   price: {
-    fontSize: 16,
+    fontSize: scale(16),
     fontWeight: "600",
     color: "#333",
-    marginTop: 5,
+    marginTop: verticalScale(5),
   },
   removeBtn: {
     alignSelf: "flex-end",
-    marginTop: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 15,
+    marginTop: verticalScale(10),
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: scale(15),
     backgroundColor: "#ff5252",
-    borderRadius: 6,
+    borderRadius: scale(6),
   },
   removeText: {
     color: "#fff",
@@ -121,25 +123,24 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     alignSelf: "center",
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-    marginTop: 15,
+    backgroundColor: "#1D5FAD",
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(25),
+    borderRadius: scale(10),
+    marginVertical: verticalScale(15),
   },
   backText: {
     color: "#fff",
     fontWeight: "600",
-    fontSize: 16,
+    fontSize: scale(16),
   },
   emptyContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 50,
   },
   emptyText: {
     color: "#888",
-    fontSize: 16,
+    fontSize: scale(16),
   },
 });

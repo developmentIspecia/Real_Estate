@@ -5,12 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  StatusBar,
-  useWindowDimensions,
-  FlatList,
   Animated,
   Dimensions,
+  Image,
 } from "react-native";
+import { scale, verticalScale, width } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather, MaterialCommunityIcons, FontAwesome5, FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -76,9 +76,6 @@ const headerNavItems = [
 ];
 
 export default function ServicesScreen({ navigation }) {
-  const { width, height } = useWindowDimensions();
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   const [activeNav, setActiveNav] = useState("Services");
   const [userName, setUserName] = useState("");
@@ -150,11 +147,11 @@ export default function ServicesScreen({ navigation }) {
 
   const renderServiceItem = ({ item }) => (
     <TouchableOpacity
-      style={[styles.serviceCard, { width: (width - scale(60)) / 2, height: scale(150), marginBottom: scale(20), borderRadius: scale(10) }]}
+      style={[styles.serviceCard, { width: (width - scale(60)) / 2, height: scale(150), marginBottom: verticalScale(20), borderRadius: scale(10) }]}
       activeOpacity={0.7}
     >
       <View style={styles.iconWrapper}>
-        {item.icon}
+        {React.cloneElement(item.icon, { size: scale(item.icon.props.size || 40) })}
       </View>
       <Text style={[styles.serviceTitle, { fontSize: scale(13) }]}>{item.title}</Text>
     </TouchableOpacity>

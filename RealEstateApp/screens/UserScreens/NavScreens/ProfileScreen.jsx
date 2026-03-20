@@ -5,22 +5,21 @@ import {
     StyleSheet,
     TouchableOpacity,
     Image,
-    useWindowDimensions,
-    StatusBar,
+    Dimensions,
     Animated,
     ScrollView,
 } from "react-native";
+import { scale, verticalScale } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchProfile } from "../../../api/api";
 import { useFocusEffect } from "@react-navigation/native";
 import LogoutModal from "../../../components/LogoutModal";
 
-export default function ProfileScreen({ navigation }) {
-    const { width, height } = useWindowDimensions();
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
+export default function ProfileScreen({ navigation, route }) {
 
     const [userName, setUserName] = useState("User");
     const [userEmail, setUserEmail] = useState("user@gmail.com");
@@ -233,7 +232,7 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     userNameEmail: {
-        marginLeft: 15,
+        marginLeft: scale(15),
         flex: 1,
     },
     profileName: {
@@ -253,7 +252,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     menuList: {
-        paddingHorizontal: 20,
+        paddingHorizontal: scale(20),
     },
     profileItem: {
         flexDirection: "row",
@@ -270,7 +269,7 @@ const styles = StyleSheet.create({
         fontWeight: "500",
     },
     bioSection: {
-        marginTop: 20,
+        marginTop: verticalScale(20),
     },
     sectionTitle: {
         fontWeight: "bold",

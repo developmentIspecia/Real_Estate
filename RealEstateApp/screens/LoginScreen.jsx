@@ -6,14 +6,14 @@ import {
     TouchableOpacity,
     StyleSheet,
     ActivityIndicator,
-    StatusBar,
     ScrollView,
     Image,
     Alert,
-    useWindowDimensions,
     KeyboardAvoidingView,
     Platform,
 } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -21,7 +21,6 @@ import { loginUser, setAuthToken } from "../api/api";
 import CustomAlert from "../components/CustomAlert";
 
 export default function LoginScreen({ navigation }) {
-    const { width, height } = useWindowDimensions();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -32,9 +31,6 @@ export default function LoginScreen({ navigation }) {
         message: "",
     });
 
-    // Responsive scaling helpers
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
 
     const showAlert = (title, message) => {
         setAlertConfig({ visible: true, title, message });

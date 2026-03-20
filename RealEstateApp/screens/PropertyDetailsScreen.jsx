@@ -6,21 +6,17 @@ import {
     TouchableOpacity,
     ScrollView,
     Image,
-    StatusBar,
-    useWindowDimensions,
     Dimensions,
 } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function PropertyDetailsScreen({ route, navigation }) {
-    const { width, height } = useWindowDimensions();
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
 
     const { property } = route?.params || {};
 

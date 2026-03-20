@@ -7,11 +7,11 @@ import {
     FlatList,
     Image,
     Dimensions,
-    useWindowDimensions,
-    StatusBar,
-    Animated,
-    ScrollView,
 } from "react-native";
+import { scale, verticalScale } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
+
+
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -20,9 +20,6 @@ import axios from "axios";
 import { API_BASE } from "../../../api/api";
 
 export default function FavoriteScreen({ navigation }) {
-    const { width, height } = useWindowDimensions();
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
 
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -263,7 +260,7 @@ const styles = StyleSheet.create({
     emptyContainer: {
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 100,
+        marginTop: verticalScale(100),
     },
     emptyText: {
         color: "#94A3B8",

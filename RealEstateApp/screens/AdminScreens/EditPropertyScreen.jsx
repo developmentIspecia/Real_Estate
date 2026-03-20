@@ -6,22 +6,20 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
-    StatusBar,
     Dimensions,
     ActivityIndicator,
     Image,
     Modal,
     FlatList,
 } from "react-native";
+import { scale, verticalScale } from "../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { updateProperty, API_BASE } from "../../api/api";
 import CustomAlert from "../../components/CustomAlert";
 
-const { width, height } = Dimensions.get("window");
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
 
 export default function EditPropertyScreen({ navigation, route }) {
     const { property } = route?.params || {};

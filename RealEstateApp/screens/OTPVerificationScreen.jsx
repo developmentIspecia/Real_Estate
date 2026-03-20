@@ -6,14 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  StatusBar,
   ImageBackground,
   KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  useWindowDimensions,
   ActivityIndicator,
 } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,7 +19,6 @@ import { verifyOtp, setAuthToken, resendOtp } from "../api/api";
 
 export default function OTPVerificationScreen({ route, navigation }) {
   const { email, phone, role, isNewUser, name, isForgotPassword } = route?.params || {};
-  const { width, height } = useWindowDimensions();
 
   const OTP_LENGTH = 6;
   const emptyOtp = Array(OTP_LENGTH).fill("");
@@ -34,9 +31,6 @@ export default function OTPVerificationScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
   const inputs = useRef([]);
-
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   useEffect(() => {
     if (timeLeft <= 0) return;

@@ -7,11 +7,11 @@ import {
     TouchableOpacity,
     ScrollView,
     Dimensions,
-    useWindowDimensions,
     ActivityIndicator,
     Image,
-    StatusBar,
 } from "react-native";
+import { scale, verticalScale } from "../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import ActionModal from "../../components/ActionModal";
@@ -20,13 +20,11 @@ import axios from "axios";
 import { API_BASE } from "../../api/api";
 import CustomAlert from "../../components/CustomAlert";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function CustomerScreen() {
     const navigation = useNavigation();
     const route = useRoute();
     const { userId } = route.params || {};
-    const { width, height } = useWindowDimensions();
 
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);

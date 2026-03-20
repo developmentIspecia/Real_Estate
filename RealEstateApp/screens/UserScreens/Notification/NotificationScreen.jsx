@@ -5,9 +5,9 @@ import {
     StyleSheet,
     TouchableOpacity,
     FlatList,
-    useWindowDimensions,
-    StatusBar,
 } from "react-native";
+import { scale, verticalScale } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -43,9 +43,6 @@ const notificationsData = [
 ];
 
 export default function NotificationScreen({ navigation }) {
-    const { width, height } = useWindowDimensions();
-    const scale = (size) => (width / 375) * size;
-    const verticalScale = (size) => (height / 812) * size;
 
     const renderNotificationItem = ({ item }) => (
         <View style={[styles.notificationItem, { paddingVertical: verticalScale(16), paddingHorizontal: scale(20) }]}>

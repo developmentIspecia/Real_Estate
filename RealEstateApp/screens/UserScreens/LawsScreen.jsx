@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   LayoutAnimation,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { scale, verticalScale } from '../../utils/responsive';
 
 const rulesData = [
   {
@@ -80,99 +82,101 @@ const LawRegulation = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Rules & Regulations</Text>
-      <Text style={styles.subheader}>
-        Please read these rules before listing or contacting sellers.
-      </Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFF3E0' }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.header}>Rules & Regulations</Text>
+        <Text style={styles.subheader}>
+          Please read these rules before listing or contacting sellers.
+        </Text>
 
-      {rulesData.map((r) => (
-        <RuleItem
-          key={r.id}
-          item={r}
-          expanded={openId === r.id}
-          onPress={() => toggle(r.id)}
-        />
-      ))}
+        {rulesData.map((r) => (
+          <RuleItem
+            key={r.id}
+            item={r}
+            expanded={openId === r.id}
+            onPress={() => toggle(r.id)}
+          />
+        ))}
 
-      <View style={{ height: 40 }} />
-    </ScrollView>
+        <View style={{ height: verticalScale(40) }} />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    paddingTop: 60,
+    padding: scale(20),
+    paddingTop: verticalScale(20),
     backgroundColor: '#FFF3E0', // soft light orange background
     minHeight: '100%',
   },
   header: {
-    fontSize: 26,
+    fontSize: scale(26),
     fontWeight: '700',
     color: '#222',
-    marginBottom: 6,
+    marginBottom: verticalScale(6),
     textAlign: 'center',
   },
   subheader: {
-    fontSize: 14,
+    fontSize: scale(14),
     color: '#555',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
     textAlign: 'center',
   },
   itemContainer: {
-    marginBottom: 14,
-    borderRadius: 12,
+    marginBottom: verticalScale(14),
+    borderRadius: scale(12),
     overflow: 'hidden',
     backgroundColor: '#FFD54F', // soft yellow card
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.05)',
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: verticalScale(1) },
     shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowRadius: scale(2),
   },
   itemHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(16),
   },
   itemTitle: {
-    fontSize: 16,
+    fontSize: scale(16),
     color: '#333',
     flex: 1,
-    marginRight: 8,
+    marginRight: scale(8),
   },
   chevron: {
-    fontSize: 18,
+    fontSize: scale(18),
     color: '#444',
   },
   itemBody: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    paddingTop: 6,
+    paddingHorizontal: scale(16),
+    paddingBottom: verticalScale(16),
+    paddingTop: verticalScale(6),
     backgroundColor: '#FFF9C4', // lighter yellow for detail
   },
   itemDetail: {
-    fontSize: 14,
+    fontSize: scale(14),
     color: '#444',
-    lineHeight: 20,
-    marginBottom: 10,
+    lineHeight: verticalScale(20),
+    marginBottom: verticalScale(10),
   },
   detailTag: {
     alignSelf: 'flex-start',
     backgroundColor: '#FFECB3',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: scale(12),
+    borderRadius: scale(6),
   },
   detailTagText: {
     color: '#5a3e00',
     fontWeight: '600',
-    fontSize: 12,
+    fontSize: scale(12),
   },
 });
 

@@ -1,6 +1,9 @@
 // screens/UserScreens/LawDetailScreen.jsx
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { scale, verticalScale } from "../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 
 const lawContents = {
   rera: {
@@ -43,13 +46,16 @@ export default function LawDetailScreen({ route }) {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
-      {/* Act Name Heading */}
-      <Text style={styles.title}>{law.title}</Text>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <ScrollView contentContainerStyle={{ padding: scale(16) }}>
+        {/* Act Name Heading */}
+        <Text style={styles.title}>{law.title}</Text>
 
-      {/* Law Content */}
-      <Text style={styles.content}>{law.content}</Text>
-    </ScrollView>
+        {/* Law Content */}
+        <Text style={styles.content}>{law.content}</Text>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

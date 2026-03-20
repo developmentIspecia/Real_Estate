@@ -8,11 +8,11 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  StatusBar,
-  Image,
-  useWindowDimensions,
   Dimensions,
+  Image,
 } from "react-native";
+import { scale, verticalScale } from "../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,13 +20,9 @@ import { io } from "socket.io-client";
 import { api, markMessagesAsRead, setAuthToken } from "../../api/api";
 import CustomAlert from "../../components/CustomAlert";
 
-const { width, height } = Dimensions.get("window");
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
 
 export default function ChatScreen({ route, navigation }) {
     const { userId, userName, profilePhoto } = route.params || {};
-    const { width, height } = useWindowDimensions();
     const partnerAvatar = profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || "User")}&background=1D5FAD&color=fff&size=128`;
 
   const [messages, setMessages] = useState([]);
@@ -165,7 +161,8 @@ export default function ChatScreen({ route, navigation }) {
       </View>
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? scale(90) : 0}
         style={{ flex: 1 }}
       >
         <FlatList

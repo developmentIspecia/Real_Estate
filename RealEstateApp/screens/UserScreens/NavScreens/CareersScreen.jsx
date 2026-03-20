@@ -5,12 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  StatusBar,
-  useWindowDimensions,
-  FlatList,
   Animated,
   Dimensions,
+  Image,
 } from "react-native";
+import { scale, verticalScale, width } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -44,9 +44,6 @@ const headerNavItems = [
 ];
 
 export default function CareersScreen({ navigation }) {
-  const { width, height } = useWindowDimensions();
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   const [activeNav, setActiveNav] = useState("Careers");
   const [userName, setUserName] = useState("");

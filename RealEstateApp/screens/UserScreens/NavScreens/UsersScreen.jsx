@@ -7,23 +7,19 @@ import {
     FlatList,
     Image,
     Dimensions,
-    useWindowDimensions,
-    StatusBar,
     TextInput,
     ScrollView,
 } from "react-native";
+import { scale, verticalScale } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchAllUsers } from "../../../api/api";
 import { ActivityIndicator } from "react-native";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const scale = (size) => (SCREEN_WIDTH / 375) * size;
-const verticalScale = (size) => (SCREEN_HEIGHT / 812) * size;
 
 export default function UsersScreen({ navigation }) {
-    const { width, height } = useWindowDimensions();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -128,7 +124,7 @@ export default function UsersScreen({ navigation }) {
     );
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#1D5FAD" />
             {renderHeader()}
 
@@ -177,7 +173,7 @@ export default function UsersScreen({ navigation }) {
                     showsVerticalScrollIndicator={false}
                 />
             )}
-        </View>
+        </SafeAreaView>
     );
 }
 

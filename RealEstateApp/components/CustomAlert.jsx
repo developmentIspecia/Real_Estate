@@ -5,12 +5,10 @@ import {
     StyleSheet,
     TouchableOpacity,
     Modal,
-    useWindowDimensions,
 } from "react-native";
+import { scale, width } from "../utils/responsive";
 
 const CustomAlert = ({ visible, onClose, title, message }) => {
-    const { width } = useWindowDimensions();
-    const scale = (size) => (width / 375) * size;
 
     return (
         <Modal

@@ -9,9 +9,10 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
-import { fetchAllUsers } from "../../api/api"; // ✅ use api/api.js
+import { scale, verticalScale } from "../../utils/responsive";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { fetchAllUsers } from "../../api/api";
 
 export default function UserListScreen({ navigation, isTab = false }) {
   const [users, setUsers] = useState([]);
@@ -43,7 +44,8 @@ export default function UserListScreen({ navigation, isTab = false }) {
     );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
       {isTab && (
         <View style={styles.tabHeader}>
           <Text style={styles.tabHeaderTitle}>Registered Users</Text>
@@ -71,10 +73,10 @@ export default function UserListScreen({ navigation, isTab = false }) {
                 <Text style={styles.name}>{item.name}</Text>
                 <Text style={styles.email}>{item.email}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color="#CBD5E1" />
+              <Ionicons name="chevron-forward" size={scale(20)} color="#CBD5E1" />
             </View>
           )}
-          contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+          contentContainerStyle={{ padding: scale(20), paddingBottom: verticalScale(100) }}
           showsVerticalScrollIndicator={false}
         />
       )}
@@ -89,7 +91,7 @@ export default function UserListScreen({ navigation, isTab = false }) {
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -97,14 +99,14 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F8FAFC" },
   loader: { flex: 1, justifyContent: "center", alignItems: "center" },
   tabHeader: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(15),
     backgroundColor: "#FFF",
     borderBottomWidth: 1,
     borderBottomColor: "#F1F5F9",
   },
   tabHeaderTitle: {
-    fontSize: 22,
+    fontSize: scale(22),
     fontWeight: "bold",
     color: "#1E293B",
   },
@@ -112,19 +114,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 12,
+    padding: scale(15),
+    borderRadius: scale(12),
+    marginBottom: verticalScale(12),
     shadowColor: "#000",
     shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: scale(10),
+    shadowOffset: { width: 0, height: verticalScale(4) },
     elevation: 3,
   },
   avatarCircle: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
+    width: scale(45),
+    height: scale(45),
+    borderRadius: scale(22.5),
     backgroundColor: "#F1F5F9",
     justifyContent: "center",
     alignItems: "center",
@@ -132,21 +134,21 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0",
   },
   avatarInitial: {
-    fontSize: 18,
+    fontSize: scale(18),
     fontWeight: "bold",
     color: "#64748B",
   },
   avatarImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 22.5,
+    borderRadius: scale(22.5),
   },
   userInfo: {
     flex: 1,
-    marginLeft: 15,
+    marginLeft: scale(15),
   },
-  name: { fontWeight: "bold", fontSize: 16, color: "#1E293B" },
-  email: { fontSize: 13, color: "#64748B", marginTop: 2 },
+  name: { fontWeight: "bold", fontSize: scale(16), color: "#1E293B" },
+  email: { fontSize: scale(13), color: "#64748B", marginTop: verticalScale(2) },
   centerContainer: {
     flex: 1,
     justifyContent: "center",
@@ -154,20 +156,20 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: "#94A3B8",
-    fontSize: 16,
+    fontSize: scale(16),
   },
   bottom: {
     position: "absolute",
-    bottom: 20,
+    bottom: verticalScale(20),
     left: 0,
     right: 0,
     alignItems: "center",
   },
   backButton: {
     backgroundColor: "#1D5FAD",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 25,
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(30),
+    borderRadius: scale(25),
   },
-  backText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
+  backText: { color: "#fff", fontWeight: "bold", fontSize: scale(16) },
 });

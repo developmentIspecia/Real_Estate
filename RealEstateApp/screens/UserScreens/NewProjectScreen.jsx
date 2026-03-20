@@ -1,103 +1,109 @@
-// screens/UserScreens/NewProjectScreen.jsx
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { scale, verticalScale } from "../../utils/responsive";
 
 export default function NewProjectScreen() {
   const navigation = useNavigation();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>New Projects</Text>
-      <Text style={styles.subtitle}>
-        Explore the latest real estate projects in your area.
-      </Text>
-
-      {/* Example Project Cards */}
-      <View style={styles.projectCard}>
-        <Text style={styles.projectTitle}>Sunrise Heights</Text>
-        <Text style={styles.projectLocation}>Mumbai, Maharashtra</Text>
-        <Text style={styles.projectDesc}>
-          A luxurious new residential project with 2 & 3 BHK apartments.
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>New Projects</Text>
+        <Text style={styles.subtitle}>
+          Explore the latest real estate projects in your area.
         </Text>
-      </View>
 
-      <View style={styles.projectCard}>
-        <Text style={styles.projectTitle}>Green Valley Residency</Text>
-        <Text style={styles.projectLocation}>Pune, Maharashtra</Text>
-        <Text style={styles.projectDesc}>
-          Affordable homes surrounded by lush greenery and modern amenities.
-        </Text>
-      </View>
+        {/* Example Project Cards */}
+        <View style={styles.projectCard}>
+          <Text style={styles.projectTitle}>Sunrise Heights</Text>
+          <Text style={styles.projectLocation}>Mumbai, Maharashtra</Text>
+          <Text style={styles.projectDesc}>
+            A luxurious new residential project with 2 & 3 BHK apartments.
+          </Text>
+        </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.buttonText}>Go Back</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <View style={styles.projectCard}>
+          <Text style={styles.projectTitle}>Green Valley Residency</Text>
+          <Text style={styles.projectLocation}>Pune, Maharashtra</Text>
+          <Text style={styles.projectDesc}>
+            Affordable homes surrounded by lush greenery and modern amenities.
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.buttonText}>Go Back</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 // ------------------ Styles ------------------
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     backgroundColor: "#f9f9f9",
+  },
+  scrollContent: {
+    flexGrow: 1,
     alignItems: "center",
-    padding: 20,
-    paddingBottom: 40,
+    padding: scale(20),
+    paddingBottom: verticalScale(40),
   },
   title: {
-    fontSize: 28,
+    fontSize: scale(28),
     fontWeight: "700",
     color: "#222",
-    marginTop: 30,
-    marginBottom: 10,
+    marginTop: verticalScale(10),
+    marginBottom: verticalScale(10),
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: scale(16),
     color: "#666",
     textAlign: "center",
-    marginBottom: 25,
+    marginBottom: verticalScale(25),
   },
   projectCard: {
     backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 15,
+    borderRadius: scale(12),
+    padding: scale(15),
     width: "100%",
-    marginBottom: 15,
+    marginBottom: verticalScale(15),
     shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowRadius: scale(5),
     elevation: 3,
   },
   projectTitle: {
-    fontSize: 20,
+    fontSize: scale(20),
     fontWeight: "700",
-    color: "#007bff",
+    color: "#1D5FAD", // Consistent color
   },
   projectLocation: {
-    fontSize: 14,
+    fontSize: scale(14),
     color: "#888",
-    marginBottom: 5,
+    marginBottom: verticalScale(5),
   },
   projectDesc: {
-    fontSize: 15,
+    fontSize: scale(15),
     color: "#444",
   },
   button: {
-    backgroundColor: "#007bff",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    marginTop: 30,
+    backgroundColor: "#1D5FAD",
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(30),
+    borderRadius: scale(10),
+    marginTop: verticalScale(20),
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: scale(16),
     fontWeight: "600",
   },
 });

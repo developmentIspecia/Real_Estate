@@ -5,15 +5,16 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  StatusBar,
   ScrollView,
   Image,
-  useWindowDimensions,
   ActivityIndicator,
   BackHandler,
   Alert,
   Keyboard,
+  Dimensions,
 } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,10 +31,8 @@ import ProfileScreen from "./UserScreens/NavScreens/ProfileScreen";
 // Admin Screens
 import UsersScreen from "./UserScreens/NavScreens/UsersScreen";
 
+
 export default function UserDashboardScreen({ navigation, route }) {
-  const { width, height } = useWindowDimensions();
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   const [activeTab, setActiveTab] = useState("Home");
   const [userName, setUserName] = useState("User");
@@ -131,7 +130,7 @@ export default function UserDashboardScreen({ navigation, route }) {
 
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
 
       <View style={{ flex: 1 }}>
@@ -156,7 +155,7 @@ export default function UserDashboardScreen({ navigation, route }) {
       </View>
 
 
-        <View style={[styles.bottomNav, { height: verticalScale(70), paddingBottom: verticalScale(10) }]}>
+        <View style={[styles.bottomNav, { height: verticalScale(60), paddingBottom: verticalScale(5) }]}>
           {userRole === "user" ? (
             <>
               <TabItem
@@ -226,7 +225,7 @@ export default function UserDashboardScreen({ navigation, route }) {
         onClose={() => setExitModalVisible(false)}
         onConfirm={() => BackHandler.exitApp()}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -261,6 +260,7 @@ const styles = StyleSheet.create({
     borderTopColor: "#F1F5F9",
     justifyContent: "space-around",
     alignItems: "center",
+    paddingBottom: verticalScale(5),
   },
   tabItem: { alignItems: "center", justifyContent: "center" },
   tabLabel: { marginTop: 4, fontWeight: "500" },

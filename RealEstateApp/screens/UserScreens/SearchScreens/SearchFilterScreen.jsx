@@ -8,19 +8,15 @@ import {
     StyleSheet,
     TouchableOpacity,
     ScrollView,
-    StatusBar,
-    TextInput,
-    useWindowDimensions,
-    Animated,
-    PanResponder,
-    Dimensions,
+  TextInput,
+  Animated,
+  PanResponder,
 } from "react-native";
+import { scale, verticalScale, width as SCREEN_WIDTH } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const scale = (size) => (SCREEN_WIDTH / 375) * size;
-const verticalScale = (size) => (SCREEN_HEIGHT / 812) * size;
 
 export default function SearchFilterScreen({ navigation, route }) {
     const [selectedPropertyType, setSelectedPropertyType] = useState("All");

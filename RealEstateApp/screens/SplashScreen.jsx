@@ -1,13 +1,10 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Image, StatusBar, useWindowDimensions } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SplashScreen({ navigation }) {
-  const { width, height } = useWindowDimensions();
-
-  // Responsive scaling helpers
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -6,15 +6,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  StatusBar,
   ScrollView,
   Image,
   ImageBackground,
   Alert,
-  useWindowDimensions,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { scale, verticalScale } from "../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -22,7 +22,6 @@ import { forgotPassword, setAuthToken } from "../api/api";
 import CustomAlert from "../components/CustomAlert";
 
 export default function ForgotPasswordScreen({ navigation }) {
-  const { width, height } = useWindowDimensions();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
@@ -31,9 +30,6 @@ export default function ForgotPasswordScreen({ navigation }) {
     message: "",
   });
 
-  // Responsive scaling helpers
-  const scale = (size) => (width / 375) * size;
-  const verticalScale = (size) => (height / 812) * size;
 
   const showAlert = (title, message) => {
     setAlertConfig({ visible: true, title, message });

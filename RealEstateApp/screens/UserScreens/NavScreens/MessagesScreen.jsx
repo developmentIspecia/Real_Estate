@@ -7,14 +7,14 @@ import {
     FlatList,
     Image,
     Dimensions,
-    useWindowDimensions,
-    StatusBar,
     Animated,
     ScrollView,
     TextInput,
     Modal,
     ActivityIndicator,
 } from "react-native";
+import { scale, verticalScale } from "../../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,20 +23,13 @@ import { API_BASE } from "../../../api/api";
 import socket from "../../../socket/socket";
 import CustomAlert from "../../../components/CustomAlert";
 
-const { width, height } = Dimensions.get("window");
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
 
 export default function MessagesScreen({ navigation }) {
-    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-    const scale = (size) => (windowWidth / 375) * size;
-    const verticalScale = (size) => (windowHeight / 812) * size;
 
     const [userRole, setUserRole] = useState("user");
     const [searchQuery, setSearchQuery] = useState("");
     const [conversations, setConversations] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [totalUnread, setTotalUnread] = useState(0);
     const [alertConfig, setAlertConfig] = useState({ visible: false, title: "", message: "" });
 
     const formatDate = (dateString) => {
@@ -82,7 +75,6 @@ export default function MessagesScreen({ navigation }) {
             })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             setConversations(mapped);
-            setTotalUnread(mapped.reduce((acc, conv) => acc + (conv.unreadCount || 0), 0));
         } catch (err) {
             console.error("Error fetching conversations:", err);
         } finally {
@@ -96,18 +88,18 @@ export default function MessagesScreen({ navigation }) {
 
         // 🎧 Socket: join room
         const setupSocket = async () => {
-             try {
+            try {
                 const token = await AsyncStorage.getItem("userToken");
-                const res = await axios.get(`${API_BASE}/user/profile`, { 
-                    headers: { Authorization: `Bearer ${token}` } 
+                const res = await axios.get(`${API_BASE}/user/profile`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.data._id) {
                     socket.emit("joinRoom", res.data._id);
                     if (res.data.role === 'admin') socket.emit("joinRoom", "admin");
                 }
-             } catch (e) {
-                 console.error("Socket join room error:", e);
-             }
+            } catch (e) {
+                console.error("Socket join room error:", e);
+            }
         }
         setupSocket();
 
@@ -120,7 +112,7 @@ export default function MessagesScreen({ navigation }) {
         };
     }, []);
 
-    const filteredConversations = conversations.filter(c => 
+    const filteredConversations = conversations.filter(c =>
         c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -140,7 +132,7 @@ export default function MessagesScreen({ navigation }) {
             <View style={styles.avatarContainer}>
                 <Image source={{ uri: item.avatar }} style={[styles.avatar, { width: scale(60), height: scale(60), borderRadius: scale(30) }]} />
                 {item.unreadCount > 0 && (
-                    <View style={[styles.unreadBadge, { backgroundColor: "#EF4444", width: scale(20), height: scale(20), borderRadius: scale(10), top: -scale(2), right: -scale(2) }]}>
+                    <View style={[styles.unreadBadge, { width: scale(20), height: scale(20), borderRadius: scale(10), top: -scale(2), right: -scale(2) }]}>
                         <Text style={[styles.unreadText, { fontSize: scale(11) }]}>{item.unreadCount}</Text>
                     </View>
                 )}
@@ -191,41 +183,36 @@ export default function MessagesScreen({ navigation }) {
     const renderHeader = () => {
         if (userRole === "admin") {
             return (
-                <View style={[styles.adminHeader, { paddingHorizontal: scale(20), paddingTop: verticalScale(20), paddingBottom: verticalScale(25) }]}>
-                    <View style={styles.adminHeaderTop}>
-                        <View>
-                            <Text style={[styles.adminHeaderTitle, { fontSize: scale(24) }]}>Admin Chat</Text>
-                            <Text style={[styles.adminUnreadStatus, { fontSize: scale(14), marginTop: verticalScale(2) }]}>{conversations.length} Active Threads</Text>
+                <SafeAreaView edges={['top']} style={styles.adminHeader}>
+                    <View style={[styles.adminHeader, { paddingHorizontal: scale(20), paddingTop: verticalScale(10), paddingBottom: verticalScale(25) }]}>
+                        <View style={styles.adminHeaderTop}>
+                            <View>
+                                <Text style={[styles.adminHeaderTitle, { fontSize: scale(24) }]}>Admin Chat</Text>
+                                <Text style={[styles.adminUnreadStatus, { fontSize: scale(14), marginTop: verticalScale(2) }]}>{conversations.length} Active Threads</Text>
+                            </View>
+                            <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+                                <Feather name="user" size={scale(24)} color="#FFF" />
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-                            <Feather name="user" size={scale(24)} color="#FFF" />
-                        </TouchableOpacity>
+                        <View style={[styles.adminSearchContainer, { marginTop: verticalScale(20), height: verticalScale(45), paddingHorizontal: scale(15) }]}>
+                            <Ionicons name="search-outline" size={scale(18)} color="#94A3B8" />
+                            <TextInput
+                                style={[styles.adminSearchInput, { fontSize: scale(15), marginLeft: scale(10) }]}
+                                placeholder="Search conversations..."
+                                placeholderTextColor="#94A3B8"
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                            />
+                        </View>
                     </View>
-                    <View style={[styles.adminSearchContainer, { marginTop: verticalScale(20), height: verticalScale(45), paddingHorizontal: scale(15) }]}>
-                        <Ionicons name="search-outline" size={scale(18)} color="#94A3B8" />
-                        <TextInput
-                            style={[styles.adminSearchInput, { fontSize: scale(15), marginLeft: scale(10) }]}
-                            placeholder="Search conversations..."
-                            placeholderTextColor="#94A3B8"
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                        />
-                    </View>
-                </View>
+                </SafeAreaView>
             );
         }
         return (
             <SafeAreaView edges={['top']} style={{ backgroundColor: '#FFF' }}>
                 <View style={[styles.topBar, { paddingHorizontal: scale(20), paddingTop: verticalScale(10), paddingBottom: verticalScale(10) }]}>
                     <View style={{ width: scale(24) }} />
-                    <View style={{ alignItems: 'center' }}>
-                        <Text style={[styles.headerTitle, { fontSize: scale(20) }]}>Messages</Text>
-                        {totalUnread > 0 && (
-                            <Text style={{ fontSize: scale(13), color: '#64748B', marginTop: verticalScale(2) }}>
-                                {totalUnread} Unread Messages
-                            </Text>
-                        )}
-                    </View>
+                    <Text style={[styles.headerTitle, { fontSize: scale(20) }]}>Messages</Text>
                     <View style={{ width: scale(24) }} />
                 </View>
             </SafeAreaView>
@@ -246,20 +233,20 @@ export default function MessagesScreen({ navigation }) {
             {renderHeader()}
 
             {loading ? (
-                <View style={[styles.centerContainer, { paddingTop: 100 }]}>
+                <View style={[styles.centerContainer, { paddingTop: verticalScale(100) }]}>
                     <ActivityIndicator size="large" color="#1D5FAD" />
                 </View>
             ) : filteredConversations.length === 0 ? (
                 <View style={styles.centerContainer}>
                     <Ionicons name="chatbubbles-outline" size={scale(60)} color="#CBD5E1" />
-                    <Text style={[styles.emptyText, { marginTop: 10 }]}>No conversations found</Text>
+                    <Text style={[styles.emptyText, { marginTop: verticalScale(10) }]}>No conversations found</Text>
                 </View>
             ) : (
                 <FlatList
                     data={filteredConversations}
                     renderItem={userRole === "admin" ? renderAdminChatItem : renderChatItem}
                     keyExtractor={(item) => item.id}
-                    contentContainerStyle={{ paddingHorizontal: scale(20), paddingBottom: 100 }}
+                    contentContainerStyle={{ paddingHorizontal: scale(20), paddingBottom: verticalScale(100) }}
                     ItemSeparatorComponent={() => <View style={styles.separator} />}
                     showsVerticalScrollIndicator={false}
                 />

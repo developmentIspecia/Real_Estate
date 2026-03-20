@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { scale, verticalScale } from "../../utils/responsive";
+import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HelpScreen = ({ navigation }) => {
-  const { width } = useWindowDimensions();
-  const scale = (size) => (width / 375) * size;
 
   return (
     <LinearGradient
@@ -59,47 +59,47 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 20,
-    paddingTop: 10,
+    padding: scale(20),
+    paddingTop: verticalScale(10),
   },
   topBar: {
-    paddingHorizontal: 20,
-    height: 50,
+    paddingHorizontal: scale(20),
+    height: verticalScale(50),
     justifyContent: 'center',
   },
   backButton: {
-    padding: 5,
-    width: 40,
+    padding: scale(5),
+    width: scale(40),
   },
   title: {
-    fontSize: 28,
+    fontSize: scale(28),
     fontWeight: "bold",
     color: "#333",
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: scale(16),
     color: "#555",
     textAlign: "center",
-    marginBottom: 30,
+    marginBottom: verticalScale(30),
   },
   section: {
-    marginBottom: 25,
+    marginBottom: verticalScale(25),
     backgroundColor: "rgba(255, 255, 255, 0.6)",
-    borderRadius: 12,
-    padding: 15,
+    borderRadius: scale(12),
+    padding: scale(15),
   },
   heading: {
-    fontSize: 18,
+    fontSize: scale(18),
     fontWeight: "bold",
     color: "#444",
-    marginBottom: 8,
+    marginBottom: verticalScale(8),
   },
   text: {
-    fontSize: 15,
+    fontSize: scale(15),
     color: "#555",
-    lineHeight: 22,
+    lineHeight: verticalScale(22),
   },
 });
 
