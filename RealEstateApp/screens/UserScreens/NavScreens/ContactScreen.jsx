@@ -8,6 +8,7 @@ import {
   ScrollView,
   Animated,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { scale, verticalScale, width } from "../../../utils/responsive";
 import { StatusBar } from "expo-status-bar";

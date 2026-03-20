@@ -9,6 +9,7 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { scale, verticalScale } from "../utils/responsive";
 import { StatusBar } from "expo-status-bar";
