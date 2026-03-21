@@ -15,11 +15,13 @@ import { api, API_BASE } from "../api/api";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AdminDashboardScreen() {
-
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  
+  const [isMenuVisible, setMenuVisible] = useState(false);
   const [adminInfo, setAdminInfo] = useState({
     name: "",
     email: "",
@@ -184,7 +186,7 @@ export default function AdminDashboardScreen() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={styles.mainHeader}>
+        <View style={[styles.mainHeader, { paddingTop: insets.top + verticalScale(10) }]}>
           <TouchableOpacity onPress={() => toggleMenu(true)}>
             <Text style={styles.menuIcon}>☰</Text>
           </TouchableOpacity>
@@ -291,7 +293,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFD54F",
     padding: scale(16),
-    paddingTop: verticalScale(35),
   },
   menuIcon: { fontSize: scale(22), fontWeight: "bold", marginRight: scale(10) },
   dashboardTitle: { fontSize: scale(18), fontWeight: "bold" },

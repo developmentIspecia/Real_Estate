@@ -107,8 +107,12 @@ export default function CustomerScreen() {
     const avatarUrl = userData.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=1D5FAD&color=fff&size=200`;
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="light-content" />
+        <SafeAreaView 
+            style={[styles.container, { backgroundColor: '#1D5FAD' }]}
+            edges={['top', 'left', 'right']}
+        >
+            <StatusBar barStyle="light-content" backgroundColor="#1D5FAD" />
+            <View style={{ flex: 1, backgroundColor: "#F8FAFC" }}>
             <CustomAlert
                 visible={alertConfig.visible}
                 title={alertConfig.title}
@@ -248,6 +252,7 @@ export default function CustomerScreen() {
                     setModalVisible(false);
                 }}
             />
+            </View>
         </SafeAreaView>
     );
 }

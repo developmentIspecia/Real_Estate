@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   Platform,
+  ScrollView,
 } from "react-native";
 import { scale, verticalScale } from "../utils/responsive";
 import { StatusBar } from "expo-status-bar";

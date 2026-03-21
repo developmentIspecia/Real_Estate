@@ -210,7 +210,7 @@ export default function MessagesScreen({ navigation }) {
         }
         return (
             <SafeAreaView edges={['top']} style={{ backgroundColor: '#FFF' }}>
-                <View style={[styles.topBar, { paddingHorizontal: scale(20), paddingTop: verticalScale(10), paddingBottom: verticalScale(10) }]}>
+                <View style={[styles.topBar, { paddingHorizontal: scale(10), paddingVertical: verticalScale(5) }]}>
                     <View style={{ width: scale(24) }} />
                     <Text style={[styles.headerTitle, { fontSize: scale(20) }]}>Messages</Text>
                     <View style={{ width: scale(24) }} />
@@ -246,7 +246,7 @@ export default function MessagesScreen({ navigation }) {
                     data={filteredConversations}
                     renderItem={userRole === "admin" ? renderAdminChatItem : renderChatItem}
                     keyExtractor={(item) => item.id}
-                    contentContainerStyle={{ paddingHorizontal: scale(20), paddingBottom: verticalScale(100) }}
+                    contentContainerStyle={{ paddingHorizontal: scale(10), paddingBottom: verticalScale(100) }}
                     ItemSeparatorComponent={() => <View style={styles.separator} />}
                     showsVerticalScrollIndicator={false}
                 />
@@ -267,6 +267,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         backgroundColor: "#FFFFFF",
+        borderBottomWidth: 1,
+        borderBottomColor: "#F1F5F9",
     },
     headerTitle: {
         fontWeight: "bold",

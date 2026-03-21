@@ -12,7 +12,7 @@ import {
   Animated,
   PanResponder,
 } from "react-native";
-import { scale, verticalScale, width as SCREEN_WIDTH } from "../../../utils/responsive";
+import { scale, verticalScale, SCREEN_WIDTH } from "../../../utils/responsive";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";

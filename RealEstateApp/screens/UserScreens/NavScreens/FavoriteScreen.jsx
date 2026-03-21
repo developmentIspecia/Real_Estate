@@ -151,7 +151,7 @@ export default function FavoriteScreen({ navigation }) {
 
 
             <SafeAreaView style={{ flex: 1 }}>
-                <View style={[styles.topBar, { paddingHorizontal: scale(20), paddingTop: verticalScale(10), paddingBottom: verticalScale(10) }]}>
+                <View style={[styles.topBar, { paddingHorizontal: scale(10), paddingVertical: verticalScale(5) }]}>
                     <View style={{ width: scale(24) }} />
                     <Text style={[styles.headerTitle, { fontSize: scale(20) }]}>Favorites</Text>
                     <Ionicons name="heart" size={scale(24)} color="#E11D48" />
@@ -162,7 +162,7 @@ export default function FavoriteScreen({ navigation }) {
                     renderItem={renderFavoriteItem}
                     keyExtractor={(item) => item._id}
                     contentContainerStyle={{
-                        paddingHorizontal: scale(20),
+                        paddingHorizontal: scale(10),
                         paddingTop: verticalScale(10),
                         paddingBottom: verticalScale(30),
                     }}
@@ -193,6 +193,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         backgroundColor: "#FFFFFF",
+        borderBottomWidth: 1,
+        borderBottomColor: "#F1F5F9",
     },
     headerTitle: {
         fontWeight: "bold",

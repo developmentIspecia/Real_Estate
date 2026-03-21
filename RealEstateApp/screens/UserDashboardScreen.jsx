@@ -155,64 +155,66 @@ export default function UserDashboardScreen({ navigation, route }) {
       </View>
 
 
-        <View style={[styles.bottomNav, { height: verticalScale(60), paddingBottom: verticalScale(5) }]}>
-          {userRole === "user" ? (
-            <>
-              <TabItem
-                label="Home"
-                icon={activeTab === "Home" ? "home" : "home-outline"}
-                active={activeTab === "Home"}
-                onPress={() => setActiveTab("Home")}
-                scale={scale}
-              />
-              <TabItem
-                label="Favorites"
-                icon={activeTab === "Favorites" ? "heart" : "heart-outline"}
-                active={activeTab === "Favorites"}
-                onPress={() => setActiveTab("Favorites")}
-                scale={scale}
-              />
-              <TabItem
-                label="Messages"
-                icon={activeTab === "Messages" ? "chatbubble" : "chatbubble-outline"}
-                active={activeTab === "Messages"}
-                onPress={() => setActiveTab("Messages")}
-                scale={scale}
-              />
-              <TabItem
-                label="Profile"
-                icon={activeTab === "Profile" ? "person" : "person-outline"}
-                active={activeTab === "Profile"}
-                onPress={() => setActiveTab("Profile")}
-                scale={scale}
-              />
-            </>
-          ) : (
-            <>
-              <TabItem
-                label="Home"
-                icon={activeTab === "Home" ? "home" : "home-outline"}
-                active={activeTab === "Home"}
-                onPress={() => setActiveTab("Home")}
-                scale={scale}
-              />
-              <TabItem
-                label="Messages"
-                icon={activeTab === "Messages" ? "chatbubble" : "chatbubble-outline"}
-                active={activeTab === "Messages"}
-                onPress={() => setActiveTab("Messages")}
-                scale={scale}
-              />
-              <TabItem
-                label="Users"
-                icon={activeTab === "Users" ? "people" : "people-outline"}
-                active={activeTab === "Users"}
-                onPress={() => setActiveTab("Users")}
-                scale={scale}
-              />
-            </>
-          )}
-        </View>
+        {!isKeyboardVisible && (
+          <View style={[styles.bottomNav, { height: verticalScale(60), paddingBottom: verticalScale(5) }]}>
+            {userRole === "user" ? (
+              <>
+                <TabItem
+                  label="Home"
+                  icon={activeTab === "Home" ? "home" : "home-outline"}
+                  active={activeTab === "Home"}
+                  onPress={() => setActiveTab("Home")}
+                  scale={scale}
+                />
+                <TabItem
+                  label="Favorites"
+                  icon={activeTab === "Favorites" ? "heart" : "heart-outline"}
+                  active={activeTab === "Favorites"}
+                  onPress={() => setActiveTab("Favorites")}
+                  scale={scale}
+                />
+                <TabItem
+                  label="Messages"
+                  icon={activeTab === "Messages" ? "chatbubble" : "chatbubble-outline"}
+                  active={activeTab === "Messages"}
+                  onPress={() => setActiveTab("Messages")}
+                  scale={scale}
+                />
+                <TabItem
+                  label="Profile"
+                  icon={activeTab === "Profile" ? "person" : "person-outline"}
+                  active={activeTab === "Profile"}
+                  onPress={() => setActiveTab("Profile")}
+                  scale={scale}
+                />
+              </>
+            ) : (
+              <>
+                <TabItem
+                  label="Home"
+                  icon={activeTab === "Home" ? "home" : "home-outline"}
+                  active={activeTab === "Home"}
+                  onPress={() => setActiveTab("Home")}
+                  scale={scale}
+                />
+                <TabItem
+                  label="Messages"
+                  icon={activeTab === "Messages" ? "chatbubble" : "chatbubble-outline"}
+                  active={activeTab === "Messages"}
+                  onPress={() => setActiveTab("Messages")}
+                  scale={scale}
+                />
+                <TabItem
+                  label="Users"
+                  icon={activeTab === "Users" ? "people" : "people-outline"}
+                  active={activeTab === "Users"}
+                  onPress={() => setActiveTab("Users")}
+                  scale={scale}
+                />
+              </>
+            )}
+          </View>
+        )}
 
       <LogoutModal
         visible={logoutModalVisible}
@@ -251,9 +253,6 @@ const styles = StyleSheet.create({
   propPrice: { color: "#1D5FAD", fontWeight: "bold", marginTop: 4 },
   propLoc: { color: "#64748B", marginTop: 4 },
   bottomNav: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
     flexDirection: "row",
     backgroundColor: "#FFF",
     borderTopWidth: 1,

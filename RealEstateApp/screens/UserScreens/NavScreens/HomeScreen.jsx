@@ -11,7 +11,7 @@ import {
     TextInput,
     Modal,
 } from "react-native";
-import { scale, verticalScale, width } from "../../../utils/responsive";
+import { scale, verticalScale, SCREEN_WIDTH as width } from "../../../utils/responsive";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "@react-navigation/native";
@@ -170,7 +170,7 @@ export default function HomeScreen({ navigation, route }) {
                     ? updatedProp.images.filter(img => img && typeof img === "string" && img.startsWith("http"))
                     : []
             };
-            setProperties((prev) => 
+            setProperties((prev) =>
                 prev.map((p) => (p._id === updatedProp._id ? processedProp : p))
             );
         });
@@ -219,7 +219,7 @@ export default function HomeScreen({ navigation, route }) {
                 images:
                     p.images && p.images.length > 0
                         ? p.images
-                              .filter((img) => img && typeof img === "string" && img.startsWith("http"))
+                            .filter((img) => img && typeof img === "string" && img.startsWith("http"))
                         : [],
             }));
 
@@ -252,7 +252,7 @@ export default function HomeScreen({ navigation, route }) {
         const filters = route?.params?.filters;
         if (filters) {
             const { propertyType, minPrice, maxPrice, location } = filters;
-            
+
             // Property Type check
             const pCat = (prop.category || "").toLowerCase();
             const fType = propertyType ? propertyType.toLowerCase() : "";
@@ -265,8 +265,9 @@ export default function HomeScreen({ navigation, route }) {
             if (typeof pPrice === 'string') {
                 pPrice = parseFloat(pPrice.replace(/[$,\s]/g, ''));
             }
-            if (minPrice !== undefined && pPrice < minPrice) return false;
-            if (maxPrice !== undefined && pPrice > maxPrice) return false;
+            const minMatch = minPrice === undefined || pPrice >= minPrice;
+            const maxMatch = maxPrice === undefined || pPrice <= maxPrice;
+            if (!minMatch || !maxMatch) return false;
 
             // Location check
             const searchLoc = (location || "").trim().toLowerCase();
@@ -281,31 +282,30 @@ export default function HomeScreen({ navigation, route }) {
     const renderUserUI = () => (
         <>
             {/* Top Bar */}
-            <View style={[styles.topBar, { paddingHorizontal: scale(20), paddingTop: verticalScale(10), paddingBottom: verticalScale(10) }]}>
+            <View style={[styles.topBar, { paddingHorizontal: scale(10), paddingTop: 0, paddingBottom: verticalScale(5) }]}>
                 <TouchableOpacity onPress={() => animateMenu(true)}>
                     <Feather name="menu" size={scale(24)} color="#000" />
                 </TouchableOpacity>
 
                 <View style={[styles.searchRow, { flex: 1, marginHorizontal: scale(10) }]}>
-                    <View style={[styles.searchContainer, { height: verticalScale(45), borderRadius: scale(12), paddingHorizontal: scale(15) }]}>
-                        <TouchableOpacity onPress={() => navigation.navigate("SearchScreen", { query: searchQuery })}>
+                    <View style={[styles.searchContainer, { height: verticalScale(38), borderRadius: scale(12), paddingHorizontal: scale(15) }]}>
+                        <View>
                             <Feather name="search" size={scale(20)} color="#1D5FAD" style={{ marginRight: scale(5) }} />
-                        </TouchableOpacity>
+                        </View>
                         <TextInput
                             style={[styles.searchInput, { fontSize: scale(15) }]}
                             placeholder="Search Properties..."
                             placeholderTextColor="#94A3B8"
                             value={searchQuery}
                             onChangeText={setSearchQuery}
-                            onSubmitEditing={() => navigation.navigate("SearchScreen", { query: searchQuery })}
                         />
                     </View>
                     <TouchableOpacity
                         style={[
                             styles.filterButton,
                             {
-                                width: verticalScale(45),
-                                height: verticalScale(45),
+                                width: verticalScale(38),
+                                height: verticalScale(38),
                                 marginLeft: scale(10),
                                 borderRadius: scale(12),
                             },
@@ -326,7 +326,7 @@ export default function HomeScreen({ navigation, route }) {
             </View>
 
             {/* Header Navigation */}
-            <View style={[styles.headerNav, { paddingVertical: verticalScale(10) }]}>
+            <View style={[styles.headerNav, { paddingVertical: verticalScale(5) }]}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: scale(15) }}>
                     {headerNavItems.map((item) => (
                         <TouchableOpacity
@@ -412,7 +412,7 @@ export default function HomeScreen({ navigation, route }) {
     const renderAdminUI = () => (
         <>
             {/* Admin Header */}
-            <View style={[styles.adminHeader, { paddingHorizontal: scale(20), paddingTop: verticalScale(20), paddingBottom: verticalScale(20), borderBottomLeftRadius: scale(20), borderBottomRightRadius: scale(20) }]}>
+            <View style={[styles.adminHeader, { paddingHorizontal: scale(20), paddingTop: verticalScale(10), paddingBottom: verticalScale(25), borderBottomLeftRadius: scale(20), borderBottomRightRadius: scale(20) }]}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <View style={{ flex: 1 }}>
                         <Text style={[styles.adminTitle, { fontSize: scale(22) }]}>Admin Dashboard</Text>
@@ -427,8 +427,8 @@ export default function HomeScreen({ navigation, route }) {
                     <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                         <Feather name="search" size={scale(20)} color="#94A3B8" />
                         <TextInput
-                            style={[styles.adminSearchInput, { fontSize: scale(15), marginLeft: scale(10) }]}
-                            placeholder="Search properties..."
+                            style={[styles.adminSearchInput, { flex: 1, paddingVertical: 0, fontSize: scale(15), marginLeft: scale(10) }]}
+                            placeholder="Search Properties..."
                             placeholderTextColor="#94A3B8"
                             value={searchQuery}
                             onChangeText={setSearchQuery}
@@ -464,7 +464,7 @@ export default function HomeScreen({ navigation, route }) {
 
             <ScrollView contentContainerStyle={{ paddingHorizontal: scale(20), paddingBottom: verticalScale(120) }} showsVerticalScrollIndicator={false}>
                 <TouchableOpacity
-                    style={[styles.uploadBtn, { paddingVertical: verticalScale(15), borderRadius: scale(12), marginBottom: verticalScale(20) }]}
+                    style={[styles.uploadBtn, { paddingVertical: verticalScale(10), borderRadius: scale(12), marginBottom: verticalScale(20) }]}
                     onPress={() => navigation.navigate("UploadProperty")}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -528,124 +528,129 @@ export default function HomeScreen({ navigation, route }) {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle={userRole === 'admin' ? "light-content" : "dark-content"} backgroundColor={userRole === 'admin' ? "#1D5FAD" : "#FFF"} />
+        <SafeAreaView
+            style={[styles.container, { backgroundColor: userRole === 'admin' ? "#1D5FAD" : "#FFFFFF" }]}
+            edges={userRole === 'admin' ? ['top', 'left', 'right'] : undefined}
+        >
+            <StatusBar barStyle={userRole === 'admin' ? "light-content" : "dark-content"} backgroundColor={userRole === 'admin' ? "#1D5FAD" : "#FFFFFF"} />
+            <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
 
-            {/* Overlay */}
-            {renderMenu && (
-                <Animated.View style={[styles.overlay, { opacity: overlayAnim }]}>
-                    <TouchableOpacity style={{ flex: 1 }} onPress={() => animateMenu(false)} />
-                </Animated.View>
-            )}
+                {/* Overlay */}
+                {renderMenu && (
+                    <Animated.View style={[styles.overlay, { opacity: overlayAnim }]}>
+                        <TouchableOpacity style={{ flex: 1 }} onPress={() => animateMenu(false)} />
+                    </Animated.View>
+                )}
 
-            {/* Delete Confirmation Modal */}
-            <Modal
-                transparent={true}
-                visible={deleteModalVisible}
-                animationType="fade"
-                onRequestClose={() => setDeleteModalVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.deleteModalContent}>
-                        <Text style={styles.deleteModalTitle}>Delete Property?</Text>
-                        <Text style={styles.deleteModalMessage}>
-                            Are you sure you want to delete this property? This action cannot be undone and will permanently remove the property from your listings.
-                        </Text>
-                        <View style={styles.deleteModalButtons}>
-                            <TouchableOpacity
-                                style={styles.cancelBtn}
-                                onPress={() => setDeleteModalVisible(false)}
-                            >
-                                <Text style={styles.cancelBtnText}>Cancel</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.confirmDeleteBtn}
-                                onPress={async () => {
-                                    if (propertyToDelete) {
-                                        try {
-                                            const token = await AsyncStorage.getItem("userToken");
-                                            await axios.delete(`${API_BASE}/properties/${propertyToDelete._id}`, { headers: { Authorization: `Bearer ${token}` } });
-                                            setDeleteModalVisible(false);
-                                            fetchProperties();
-                                        } catch (err) {
-                                            console.error("Delete failed", err);
-                                            Alert.alert("Error", "Failed to delete property.");
-                                        }
-                                    }
-                                }}
-                            >
-                                <Text style={styles.confirmDeleteBtnText}>Delete</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
-
-            {/* Side Menu */}
-            {(menuOpen || renderMenu) && (
-                <Animated.View
-                    style={[styles.sideMenu, { left: slideAnim, width: width * 0.7 }]}
+                {/* Delete Confirmation Modal */}
+                <Modal
+                    transparent={true}
+                    visible={deleteModalVisible}
+                    animationType="fade"
+                    onRequestClose={() => setDeleteModalVisible(false)}
                 >
-                    <View style={[styles.menuHeader, { paddingVertical: verticalScale(20), paddingHorizontal: scale(20) }]}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Text style={[styles.menuTitle, { fontSize: scale(26) }]}>Menu</Text>
-                            <TouchableOpacity style={[styles.closeBtn, { width: scale(40), height: scale(40), borderRadius: scale(20) }]} onPress={() => animateMenu(false)}>
-                                <Ionicons name="close" size={scale(24)} color="#475569" />
-                            </TouchableOpacity>
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.deleteModalContent}>
+                            <Text style={styles.deleteModalTitle}>Delete Property?</Text>
+                            <Text style={styles.deleteModalMessage}>
+                                Are you sure you want to delete this property? This action cannot be undone and will permanently remove the property from your listings.
+                            </Text>
+                            <View style={styles.deleteModalButtons}>
+                                <TouchableOpacity
+                                    style={styles.cancelBtn}
+                                    onPress={() => setDeleteModalVisible(false)}
+                                >
+                                    <Text style={styles.cancelBtnText}>Cancel</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.confirmDeleteBtn}
+                                    onPress={async () => {
+                                        if (propertyToDelete) {
+                                            try {
+                                                const token = await AsyncStorage.getItem("userToken");
+                                                await axios.delete(`${API_BASE}/properties/${propertyToDelete._id}`, { headers: { Authorization: `Bearer ${token}` } });
+                                                setDeleteModalVisible(false);
+                                                fetchProperties();
+                                            } catch (err) {
+                                                console.error("Delete failed", err);
+                                                Alert.alert("Error", "Failed to delete property.");
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <Text style={styles.confirmDeleteBtnText}>Delete</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
+                </Modal>
 
-                    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: verticalScale(20) }}>
-                        {sideMenuItems.map((item) => (
-                            <TouchableOpacity
-                                key={item.title}
-                                style={[styles.menuItem, { paddingVertical: verticalScale(14), paddingHorizontal: scale(20) }]}
-                                onPress={() => {
-                                    animateMenu(false);
-                                    if (item.screen === "HomeScreen") {
-                                        setActiveNav("All");
-                                    } else if (item.screen !== "ServicesScreen" && item.screen !== "ContactScreen") {
-                                        // Use setTimeout to ensure navigation happens after the menu state starts updating
-                                        setTimeout(() => {
-                                            navigation.navigate(item.screen);
-                                        }, 100);
-                                    }
-                                }}
-                            >
-                                <View style={styles.menuItemLeft}>
-                                    <View style={[styles.itemIconCircle, { width: scale(52), height: scale(52), borderRadius: scale(26) }]}>
-                                        {item.type === "Ionicons" ? (
-                                            <Ionicons name={item.icon} size={scale(24)} color="#FFF" />
-                                        ) : item.type === "Feather" ? (
-                                            <Feather name={item.icon} size={scale(24)} color="#FFF" />
-                                        ) : (
-                                            <MaterialCommunityIcons name={item.icon} size={scale(24)} color="#FFF" />
-                                        )}
+                {/* Side Menu */}
+                {(menuOpen || renderMenu) && (
+                    <Animated.View
+                        style={[styles.sideMenu, { left: slideAnim, width: width * 0.7 }]}
+                    >
+                        <View style={[styles.menuHeader, { paddingVertical: verticalScale(20), paddingHorizontal: scale(20) }]}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Text style={[styles.menuTitle, { fontSize: scale(26) }]}>Menu</Text>
+                                <TouchableOpacity style={[styles.closeBtn, { width: scale(40), height: scale(40), borderRadius: scale(20) }]} onPress={() => animateMenu(false)}>
+                                    <Ionicons name="close" size={scale(24)} color="#475569" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: verticalScale(20) }}>
+                            {sideMenuItems.map((item) => (
+                                <TouchableOpacity
+                                    key={item.title}
+                                    style={[styles.menuItem, { paddingVertical: verticalScale(14), paddingHorizontal: scale(20) }]}
+                                    onPress={() => {
+                                        animateMenu(false);
+                                        if (item.screen === "HomeScreen") {
+                                            setActiveNav("All");
+                                        } else if (item.screen !== "ServicesScreen" && item.screen !== "ContactScreen") {
+                                            // Use setTimeout to ensure navigation happens after the menu state starts updating
+                                            setTimeout(() => {
+                                                navigation.navigate(item.screen);
+                                            }, 100);
+                                        }
+                                    }}
+                                >
+                                    <View style={styles.menuItemLeft}>
+                                        <View style={[styles.itemIconCircle, { width: scale(52), height: scale(52), borderRadius: scale(26) }]}>
+                                            {item.type === "Ionicons" ? (
+                                                <Ionicons name={item.icon} size={scale(24)} color="#FFF" />
+                                            ) : item.type === "Feather" ? (
+                                                <Feather name={item.icon} size={scale(24)} color="#FFF" />
+                                            ) : (
+                                                <MaterialCommunityIcons name={item.icon} size={scale(24)} color="#FFF" />
+                                            )}
+                                        </View>
+                                        <Text style={[styles.menuText, { fontSize: scale(18), marginLeft: scale(18) }]}>{item.title}</Text>
                                     </View>
-                                    <Text style={[styles.menuText, { fontSize: scale(18), marginLeft: scale(18) }]}>{item.title}</Text>
-                                </View>
+                                </TouchableOpacity>
+                            ))}
+
+                            {/* Space for Logout */}
+                            <View style={{ height: verticalScale(40) }} />
+                        </ScrollView>
+
+                        <View style={[styles.menuFooter, { paddingHorizontal: scale(20), paddingBottom: verticalScale(30) }]}>
+                            <TouchableOpacity style={[styles.menuLogoutAction, { borderRadius: scale(10), paddingVertical: verticalScale(12) }]} onPress={() => setLogoutModalVisible(true)}>
+                                <Text style={[styles.logoutText, { fontSize: scale(16) }]}>Logout</Text>
                             </TouchableOpacity>
-                        ))}
+                        </View>
+                    </Animated.View>
+                )}
 
-                        {/* Space for Logout */}
-                        <View style={{ height: verticalScale(40) }} />
-                    </ScrollView>
+                {userRole === 'admin' ? renderAdminUI() : renderUserUI()}
 
-                    <View style={[styles.menuFooter, { paddingHorizontal: scale(20), paddingBottom: verticalScale(30) }]}>
-                        <TouchableOpacity style={[styles.menuLogoutAction, { borderRadius: scale(10), paddingVertical: verticalScale(12) }]} onPress={() => setLogoutModalVisible(true)}>
-                            <Text style={[styles.logoutText, { fontSize: scale(16) }]}>Logout</Text>
-                        </TouchableOpacity>
-                    </View>
-                </Animated.View>
-            )}
-
-            {userRole === 'admin' ? renderAdminUI() : renderUserUI()}
-            
-            <LogoutModal
-                visible={logoutModalVisible}
-                onClose={() => setLogoutModalVisible(false)}
-                onConfirm={handleLogout}
-            />
+                <LogoutModal
+                    visible={logoutModalVisible}
+                    onClose={() => setLogoutModalVisible(false)}
+                    onConfirm={handleLogout}
+                />
+            </View>
         </SafeAreaView>
     );
 }

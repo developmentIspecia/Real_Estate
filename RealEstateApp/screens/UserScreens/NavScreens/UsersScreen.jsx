@@ -124,8 +124,12 @@ export default function UsersScreen({ navigation }) {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView 
+            style={[styles.container, { backgroundColor: '#1D5FAD' }]}
+            edges={['top', 'left', 'right']}
+        >
             <StatusBar barStyle="light-content" backgroundColor="#1D5FAD" />
+            <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
             {renderHeader()}
 
             <View style={[styles.tabsRow, { paddingHorizontal: scale(20), marginVertical: verticalScale(15) }]}>
@@ -173,6 +177,7 @@ export default function UsersScreen({ navigation }) {
                     showsVerticalScrollIndicator={false}
                 />
             )}
+            </View>
         </SafeAreaView>
     );
 }
@@ -187,7 +192,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: scale(25),
         borderBottomRightRadius: scale(25),
         paddingHorizontal: scale(20),
-        paddingTop: verticalScale(20),
+        paddingTop: verticalScale(10),
         paddingBottom: verticalScale(25),
     },
     headerTop: {

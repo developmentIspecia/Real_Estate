@@ -70,7 +70,7 @@ export default function ProfileScreen({ navigation, route }) {
 
 
             <SafeAreaView style={{ flex: 1 }} edges={['top']}>
-                <View style={[styles.topBar, { paddingHorizontal: scale(20), height: verticalScale(60) }]}>
+                <View style={[styles.topBar, { paddingHorizontal: scale(10), paddingVertical: verticalScale(5) }]}>
                     {userRole === "admin" ? (
                         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                             <Ionicons name="arrow-back" size={scale(24)} color="#1E293B" />
@@ -78,7 +78,7 @@ export default function ProfileScreen({ navigation, route }) {
                     ) : (
                         <View style={{ width: scale(24) }} />
                     )}
-                    <Text style={[styles.headerTitle, { fontSize: scale(18) }]}>Profile</Text>
+                    <Text style={[styles.headerTitle, { fontSize: scale(20) }]}>Profile</Text>
                     <View style={{ width: scale(24) }} />
                 </View>
 
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     menuList: {
-        paddingHorizontal: scale(20),
+        paddingHorizontal: scale(10),
     },
     profileItem: {
         flexDirection: "row",

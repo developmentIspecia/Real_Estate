@@ -44,8 +44,12 @@ export default function UserListScreen({ navigation, isTab = false }) {
     );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView 
+      style={[styles.container, { backgroundColor: isTab ? '#FFF' : '#F8FAFC' }]}
+      edges={['top', 'left', 'right']}
+    >
+      <StatusBar barStyle="dark-content" backgroundColor={isTab ? '#FFF' : '#F8FAFC'} />
+      <View style={{ flex: 1, backgroundColor: "#F8FAFC" }}>
       {isTab && (
         <View style={styles.tabHeader}>
           <Text style={styles.tabHeaderTitle}>Registered Users</Text>
@@ -91,6 +95,7 @@ export default function UserListScreen({ navigation, isTab = false }) {
           </TouchableOpacity>
         </View>
       )}
+      </View>
     </SafeAreaView>
   );
 }
