@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6077c0a3-308a-47d2-a45c-612233b8b90d"
+      }
+    },
+    "owner": "nitin_expo_create"
   }
 }
