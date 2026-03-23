@@ -18,7 +18,7 @@ const CustomAlert = ({ visible, onClose, title, message }) => {
             onRequestClose={onClose}
         >
             <View style={styles.centeredView}>
-                <View style={[styles.modalView, { width: width * 0.65, borderRadius: scale(16), padding: scale(20) }]}>
+                <View style={[styles.modalView, { width: width * 0.85, borderRadius: scale(15), padding: scale(20) }]}>
                     <Text style={[styles.modalTitle, { fontSize: scale(18) }]}>{title}</Text>
                     <Text style={[styles.modalText, { fontSize: scale(14), marginTop: scale(10), marginBottom: scale(20) }]}>
                         {message}
