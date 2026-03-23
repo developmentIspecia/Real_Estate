@@ -248,7 +248,13 @@ export default function SignupScreen({ navigation }) {
                 color: "#777", fontSize: scale(14)
                 , textAlign: "center",
               }}>
-                By Creating an account you agree to the Privacy Policy and to the <Text style={{ color: "#1D5FAD", fontWeight: "bold" }}>terms of use</Text>
+                By Creating an account you agree to the Privacy Policy and to the{" "}
+                <Text
+                  style={{ color: "#1D5FAD", fontWeight: "bold" }}
+                  onPress={() => navigation.navigate("TermsScreen")}
+                >
+                  terms of use
+                </Text>
               </Text>
             </View>
           </View>

@@ -10,6 +10,7 @@ import SavedScreen from "../screens/UserScreens/SavedScreen";
 import SettingsScreen from "../screens/UserScreens/SettingsScreen";
 import ChangePassword from "../screens/UserScreens/Setting/ChangePassword";
 import PersonalDetails from "../screens/UserScreens/Setting/PersonalDetails";
+import TermsAndConditionsScreen from "../screens/UserScreens/Setting/Terms&ConditionsScreen";
 import LawsScreen from "../screens/UserScreens/LawsScreen";
 import ServicesScreen from "../screens/UserScreens/NavScreens/ServicesScreen";
 import CareersScreen from "../screens/UserScreens/NavScreens/CareersScreen";
@@ -73,6 +74,7 @@ export default function UserStack() {
       {/* Settings screens */}
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="PersonalDetails" component={PersonalDetails} />
+      <Stack.Screen name="TermsScreen" component={TermsAndConditionsScreen} />
     </Stack.Navigator>
   );
 }

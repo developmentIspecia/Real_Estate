@@ -18,18 +18,18 @@ const CustomAlert = ({ visible, onClose, title, message }) => {
             onRequestClose={onClose}
         >
             <View style={styles.centeredView}>
-                <View style={[styles.modalView, { width: width * 0.72, borderRadius: scale(20), padding: scale(24) }]}>
-                    <Text style={[styles.modalTitle, { fontSize: scale(20) }]}>{title}</Text>
-                    <Text style={[styles.modalText, { fontSize: scale(15), marginTop: scale(10), marginBottom: scale(25) }]}>
+                <View style={[styles.modalView, { width: width * 0.65, borderRadius: scale(16), padding: scale(20) }]}>
+                    <Text style={[styles.modalTitle, { fontSize: scale(18) }]}>{title}</Text>
+                    <Text style={[styles.modalText, { fontSize: scale(14), marginTop: scale(10), marginBottom: scale(20) }]}>
                         {message}
                     </Text>
 
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
-                            style={[styles.button, styles.confirmButton, { paddingVertical: scale(12), borderRadius: scale(10) }]}
+                            style={[styles.button, styles.confirmButton, { paddingVertical: scale(10), borderRadius: scale(8) }]}
                             onPress={onClose}
                         >
-                            <Text style={[styles.confirmButtonText, { fontSize: scale(16) }]}>OK</Text>
+                            <Text style={[styles.confirmButtonText, { fontSize: scale(14) }]}>OK</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
