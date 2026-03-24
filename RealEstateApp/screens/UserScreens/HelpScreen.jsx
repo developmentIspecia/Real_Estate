@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import { scale, verticalScale, width } from "../../utils/responsive";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api, setAuthToken } from "../../api/api";
 
 const FAQ_DATA = [
   {
@@ -50,6 +53,43 @@ const FAQ_DATA = [
 const HelpScreen = ({ navigation }) => {
   const [expandedId, setExpandedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [adminContact, setAdminContact] = useState(null);
+
+  // Fetch admin contact on mount so Live Chat can start immediately
+  useEffect(() => {
+    const fetchAdmin = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) return;
+        setAuthToken(token);
+        const res = await api.get("/user/contacts", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        // Pick the first admin from the contacts list
+        const admin = res.data.find((c) => c.role === "admin") || res.data[0];
+        if (admin) {
+          setAdminContact({
+            id: admin._id,
+            name: admin.name || "Support",
+            avatar:
+              admin.profilePhoto ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name || "Admin")}&background=1D5FAD&color=fff&size=128`,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch admin contact:", err);
+      }
+    };
+    fetchAdmin();
+  }, []);
+
+  const handleLiveChat = () => {
+    if (!adminContact) {
+      Alert.alert("Unavailable", "Support chat is currently unavailable. Please try again later.");
+      return;
+    }
+    navigation.navigate("ChatScreen", { person: adminContact });
+  };
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -115,16 +155,10 @@ const HelpScreen = ({ navigation }) => {
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Can't find what you're looking for?</Text>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.footerButton}>
-              <Feather name="message-circle" size={scale(18)} color="#333" />
-              <Text style={styles.footerButtonText}>Live Chat</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.footerButton}>
-              <Feather name="mail" size={scale(18)} color="#333" />
-              <Text style={styles.footerButtonText}>Email Us</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.footerButton} onPress={handleLiveChat}>
+            <Feather name="message-circle" size={scale(18)} color="#333" />
+            <Text style={styles.footerButtonText}>Live Chat</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

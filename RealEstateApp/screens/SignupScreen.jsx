@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { scale, verticalScale } from "../utils/responsive";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { signup, setAuthToken } from "../api/api";
 import CustomAlert from "../components/CustomAlert";
@@ -28,11 +29,28 @@ export default function SignupScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
     visible: false,
     title: "",
     message: "",
   });
+
+  // Clear any previous acceptance on mount — every new signup starts fresh
+  useEffect(() => {
+    AsyncStorage.removeItem("termsAccepted");
+    setTermsAccepted(false);
+  }, []);
+
+  // Re-check AsyncStorage every time this screen comes into focus
+  // (e.g. after returning from TermsAndConditionsScreen)
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem("termsAccepted").then((val) => {
+        if (val === "true") setTermsAccepted(true);
+      });
+    }, [])
+  );
 
 
   const showAlert = (title, message) => {
@@ -42,6 +60,11 @@ export default function SignupScreen({ navigation }) {
   const handleSignup = async () => {
     if (!fullName || !email || !password || !phoneNumber || !confirmPassword) {
       showAlert("Error", "Please fill all required fields");
+      return;
+    }
+
+    if (!termsAccepted) {
+      showAlert("Terms & Conditions", "Please accept the Terms & Conditions to continue");
       return;
     }
 
@@ -243,17 +266,34 @@ export default function SignupScreen({ navigation }) {
               )}
             </TouchableOpacity>
 
-            <View style={{ alignItems: "center", marginBottom: verticalScale(10) }}>
-              <Text style={{
-                color: "#777", fontSize: scale(14)
-                , textAlign: "center",
-              }}>
-                By Creating an account you agree to the Privacy Policy and to the{" "}
+            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: verticalScale(10), paddingHorizontal: scale(4) }}>
+              <TouchableOpacity
+                onPress={async () => {
+                  const newVal = !termsAccepted;
+                  setTermsAccepted(newVal);
+                  if (newVal) {
+                    await AsyncStorage.setItem("termsAccepted", "true");
+                  } else {
+                    await AsyncStorage.removeItem("termsAccepted");
+                  }
+                }}
+                style={[
+                  styles.checkbox,
+                  termsAccepted && styles.checkboxChecked,
+                ]}
+                activeOpacity={0.8}
+              >
+                {termsAccepted && (
+                  <Ionicons name="checkmark" size={scale(14)} color="#fff" />
+                )}
+              </TouchableOpacity>
+              <Text style={{ color: "#777", fontSize: scale(13), flex: 1, marginLeft: scale(8) }}>
+                I agree to the{" "}
                 <Text
                   style={{ color: "#1D5FAD", fontWeight: "bold" }}
                   onPress={() => navigation.navigate("TermsScreen")}
                 >
-                  terms of use
+                  Terms & Conditions
                 </Text>
               </Text>
             </View>
@@ -308,6 +348,20 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: "#FFF",
     fontWeight: "bold",
+  },
+  checkbox: {
+    width: scale(20),
+    height: scale(20),
+    borderRadius: scale(5),
+    borderWidth: 2,
+    borderColor: "#1D5FAD",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+  checkboxChecked: {
+    backgroundColor: "#1D5FAD",
+    borderColor: "#1D5FAD",
   },
   socialIcon: {
     width: 45,

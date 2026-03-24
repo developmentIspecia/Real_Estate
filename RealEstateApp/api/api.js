@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // 🌍 Global IP (change here only if needed)
-export const GLOBAL_IP = "192.168.1.33";
+export const GLOBAL_IP = "192.168.1.6";
 export const API_BASE = `http://${GLOBAL_IP}:5000/api`;
 
 // Axios instance

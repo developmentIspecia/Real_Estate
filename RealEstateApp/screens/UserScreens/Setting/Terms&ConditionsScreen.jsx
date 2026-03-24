@@ -1,18 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { scale, verticalScale } from "../../../utils/responsive";
 
 const TermsAndConditionsScreen = () => {
   const navigation = useNavigation();
   const [accepted, setAccepted] = useState(false);
 
-  const handleAccept = () => {
+  // Load from AsyncStorage on mount to stay in sync with SignupScreen checkbox
+  useEffect(() => {
+    AsyncStorage.getItem("termsAccepted").then((val) => {
+      if (val === "true") setAccepted(true);
+    });
+  }, []);
+
+  const handleAccept = async () => {
+    await AsyncStorage.setItem("termsAccepted", "true");
     setAccepted(true);
-    // Add logic here if you want to navigate back after accepting
-    // setTimeout(() => navigation.goBack(), 500); 
+    navigation.goBack();
   };
 
   return (

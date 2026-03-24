@@ -12,6 +12,7 @@ import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import SignupScreen from "./screens/SignupScreen";
 import OTPVerificationScreen from "./screens/OTPVerificationScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import TermsAndConditionsScreen from "./screens/UserScreens/Setting/Terms&ConditionsScreen";
 
 // Stacks
 import UserStack from "./navigation/UserStack";
@@ -32,6 +33,7 @@ export default function App() {
           <Stack.Screen name="Signup" component={SignupScreen} />
           <Stack.Screen name="OTPVerificationScreen" component={OTPVerificationScreen} />
           <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
+          <Stack.Screen name="TermsScreen" component={TermsAndConditionsScreen} />
 
           {/* Main App Screens */}
           <Stack.Screen name="UserStack" component={UserStack} />
